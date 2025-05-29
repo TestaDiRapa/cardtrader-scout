@@ -12,7 +12,7 @@ data class PaginatedList<T : ScryfallRootEntity>(
 ) {
 
 	init {
-		check(objectType == "string") {
+		check(objectType == "list") {
 			"Returned type is not a paginated list"
 		}
 	}
