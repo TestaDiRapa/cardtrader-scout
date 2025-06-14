@@ -10,7 +10,20 @@ import org.testadirapa.models.scryfall.PaginatedList
 import org.testadirapa.models.scryfall.ScryfallCard
 import org.testadirapa.services.ScryfallService
 
-class ScryfallServiceImpl: ScryfallService {
+class ScryfallServiceImpl private constructor(): ScryfallService {
+
+	companion object {
+
+		private lateinit var instance: ScryfallServiceImpl
+
+		operator fun invoke(): ScryfallServiceImpl {
+			if (!::instance.isInitialized) {
+				instance = ScryfallServiceImpl()
+			}
+			return instance
+		}
+
+	}
 
 	private val client = HttpConfig.newHttpClient {
 		defaultRequest {

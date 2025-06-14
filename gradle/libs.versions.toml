@@ -3,6 +3,8 @@ caffeine = "3.1.8"
 kotlinx = "1.8.1"
 kotlin = "2.1.20"
 ktor = "3.1.1"
+telegram = "24.0.2"
+krontab = "2.7.2"
 
 [libraries]
 kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx" }
@@ -10,10 +12,29 @@ ktor-client = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref="ktor" }
-caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version.ref = "caffeine" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+telegram-bot = { module = "dev.inmo:tgbotapi", version.ref = "telegram" }
+ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-serialization-kotlin = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref="ktor" }
+krontab = { module = "dev.inmo:krontab", version.ref = "krontab" }
 
 [bundles]
-ktor-client = ["ktor-client", "ktor-client-okhttp", "ktor-client-content-negotiation", "ktor-serialization-json"]
+ktor-client = [
+    "ktor-client",
+    "ktor-client-okhttp",
+    "ktor-client-content-negotiation",
+    "ktor-serialization-json"
+]
+ktor-server = [
+    "ktor-server-core",
+    "ktor-server-content-negotiation",
+    "ktor-server-netty",
+    "ktor-server-serialization-kotlin",
+    "ktor-server-status-pages"
+]
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

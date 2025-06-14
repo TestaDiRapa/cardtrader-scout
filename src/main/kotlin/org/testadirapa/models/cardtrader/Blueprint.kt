@@ -5,8 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Blueprint(
-	val id: Int,
+	val id: Long,
 	@SerialName("expansion_id") val expansionId: Int,
+	val slug: String,
 	val name: String,
 	val version: String? = null,
 	val image: Image? = null,
