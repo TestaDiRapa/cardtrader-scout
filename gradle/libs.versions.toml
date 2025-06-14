@@ -1,13 +1,17 @@
 [versions]
+androidx = "2.9.0"
 caffeine = "3.1.8"
 kotlinx = "1.8.1"
-kotlin = "2.1.20"
-ktor = "3.1.1"
+kotlin = "2.1.21"
+ktor = "3.1.2"
 telegram = "24.0.2"
 krontab = "2.7.2"
+compose = "1.8.1"
+icons = "1.7.3"
+coil = "3.2.0"
 
 [libraries]
-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx" }
 ktor-client = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
@@ -17,14 +21,24 @@ telegram-bot = { module = "dev.inmo:tgbotapi", version.ref = "telegram" }
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
-ktor-server-serialization-kotlin = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref="ktor" }
 krontab = { module = "dev.inmo:krontab", version.ref = "krontab" }
+compose-icons = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "icons" }
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx" }
+androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx" }
+
 
 [bundles]
+coil = [
+    "coil-compose",
+    "coil-network-ktor"
+]
 ktor-client = [
     "ktor-client",
-    "ktor-client-okhttp",
     "ktor-client-content-negotiation",
     "ktor-serialization-json"
 ]
@@ -32,10 +46,13 @@ ktor-server = [
     "ktor-server-core",
     "ktor-server-content-negotiation",
     "ktor-server-netty",
-    "ktor-server-serialization-kotlin",
+    "ktor-serialization-json",
     "ktor-server-status-pages"
 ]
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

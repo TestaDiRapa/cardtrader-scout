@@ -1,0 +1,3 @@
+package org.testadirapa.scryfall
+
+interface ScryfallRootEntity
