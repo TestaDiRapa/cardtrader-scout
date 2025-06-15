@@ -8,13 +8,13 @@ abstract class StatefulBotCommand<T : BehaviourContext> {
 
 	protected abstract val command: String
 
-	protected abstract suspend fun T.initializer(message: TextMessage)
+	protected abstract suspend fun T.initializer(message: TextMessage, webAppUrl: String)
 
 	protected abstract suspend fun T.registerStates()
 
 	context(T)
-	suspend fun register() {
-		command(command) { initializer(it) }
+	suspend fun register(webAppUrl: String) {
+		command(command) { initializer(it, webAppUrl) }
 		registerStates()
 	}
 

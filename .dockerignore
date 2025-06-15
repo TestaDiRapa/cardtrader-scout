@@ -1,0 +1,43 @@
+# Gradle-related
+.gradle/
+**/build/
+!card-trader-scout/build/dist/wasmJs/productionExecutable
+gradle-app.setting/
+!gradle/wrapper/
+
+# Kotlin specific
+.kotlin/
+
+# IDE/Editor configs
+.idea/
+*.iml
+.vscode/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Node-related (for WASM/npm integrations)
+**/node_modules/
+**/package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml
+npm-debug.log
+yarn-error.log
+
+# Docs and temp files
+doc/
+*.log
+*.tmp
+
+# Docker artifacts
+Dockerfile
+docker-compose.yml
+
+# Env and secrets
+.env
+*.local

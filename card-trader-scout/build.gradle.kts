@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.shadow)
 }
 
 kotlin {
@@ -56,6 +57,7 @@ kotlin {
                 implementation(libs.telegram.bot)
                 implementation(libs.caffeine)
                 implementation(libs.krontab)
+                implementation(libs.logback)
             }
         }
 
@@ -68,9 +70,6 @@ kotlin {
 
         wasmJsMain {
             dependencies {
-                implementation(compose.ui)
-                implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
                 implementation(libs.bundles.coil)
                 implementation(libs.compose.icons)
                 implementation(libs.androidx.lifecycle.viewmodel)
@@ -79,4 +78,19 @@ kotlin {
         }
     }
 }
+
+tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("fatJar") {
+    group = "build"
+    archiveClassifier.set("all")
+    manifest {
+        attributes["Main-Class"] = "org.testadirapa.MainKtKt"
+    }
+    from(kotlin.jvm().compilations["main"].output)
+    configurations = listOf(project.configurations.getByName("jvmRuntimeClasspath"))
+}
+
+tasks.named("build") {
+    dependsOn("fatJar")
+}
+
 

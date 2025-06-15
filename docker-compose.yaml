@@ -1,0 +1,30 @@
+services:
+    couchdb:
+        image: couchdb:3.4.2
+        environment:
+            COUCHDB_USER: ${COUCHDB_USER}
+            COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
+        networks:
+            - internal
+        volumes:
+            - ./couchdb/data/:/opt/couchdb/data
+
+    card-trader-scout:
+        image: card-trader-scout:0.0.1
+        restart: always
+        networks:
+            - internal
+        ports:
+            - 8081:8081
+        environment:
+            WEBAPP_FOLDER: /app/webapp
+            WEBAPP_URL: ${WEBAPP_URL}
+            TELEGRAM_API_KEY: ${TELEGRAM_API_KEY}
+            CARD_TRADER_TOKEN: ${CARD_TRADER_TOKEN}
+            COUCHDB_URL: http://couchdb:5984
+            COUCHDB_USERNAME: ${COUCHDB_USER}
+            COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
+
+networks:
+    internal:
+        driver: bridge

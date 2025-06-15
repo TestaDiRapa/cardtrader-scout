@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 class WebviewServer(
+	webAppStaticFolder: String,
 	private val cardTraderService: CardTraderService,
 	private val scryfallService: ScryfallService,
 	private val couchDbService: CouchDbService,
@@ -71,7 +72,7 @@ class WebviewServer(
 		}
 	}
 
-	private val staticFolder = File("/Users/vincenzoclaudiopierro/Documents/GitHub/cardtrader-scout/card-trader-scout/build/dist/wasmJs/productionExecutable")
+	private val staticFolder = File(webAppStaticFolder)
 
 	private fun Application.configureRouting() {
 		routing {

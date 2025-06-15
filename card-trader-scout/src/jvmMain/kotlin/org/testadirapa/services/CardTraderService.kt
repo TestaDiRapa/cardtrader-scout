@@ -41,14 +41,14 @@ interface CardTraderService {
 	 *
 	 * @param blueprintId the id of the blueprint to search.
 	 * @param expansionId if not null, filters out all the products that are not of the specified expansion.
-	 * @param foil if true, only returns the listings of foil products.
+	 * @param foil filter foil products.
 	 * @param language if not null, only returns the products with the specified language.
 	 * @return a [List] of [Product] that match all the filters, in ascending order by price.
 	 */
 	suspend fun searchProducts(
 		blueprintId: Long,
 		expansionId: String? = null,
-		foil: Boolean = false,
+		foil: Boolean? = null,
 		language: MtgLanguage? = null
 	): List<Product>
 

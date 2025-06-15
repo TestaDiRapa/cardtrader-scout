@@ -110,7 +110,7 @@ class CardTraderServiceImpl private constructor(
 	override suspend fun searchProducts(
 		blueprintId: Long,
 		expansionId: String?,
-		foil: Boolean,
+		foil: Boolean?,
 		language: MtgLanguage?
 	): List<Product> = client.get {
 		url {
@@ -119,7 +119,9 @@ class CardTraderServiceImpl private constructor(
 			if (expansionId != null) {
 				parameter("expansion_id", expansionId)
 			}
-			parameter("foil", foil)
+			if (foil != null) {
+				parameter("foil", foil)
+			}
 			if (language != null) {
 				parameter("language", language)
 			}

@@ -9,6 +9,8 @@ import org.testadirapa.telegram.CardTraderScoutBot
 import org.testadirapa.webview.WebviewServer
 
 suspend fun main() {
+	val webAppPath = System.getenv("WEBAPP_FOLDER")
+	val webAppUrl = System.getenv("WEBAPP_URL")
 	val telegramApiKey: String = System.getenv("TELEGRAM_API_KEY")
 	val cardTraderToken: String = System.getenv("CARD_TRADER_TOKEN")
 	val scryfallService = ScryfallServiceImpl()
@@ -20,13 +22,17 @@ suspend fun main() {
 	)
 	PriceChecker(cardTraderService, couchDbService).launchCheckJob()
 	WebviewServer(
+		webAppStaticFolder = webAppPath,
 		cardTraderService = cardTraderService,
 		scryfallService = scryfallService,
 		couchDbService = couchDbService,
 		urlKeeper = TelegramAPIUrlsKeeper(
 			token = telegramApiKey,
-			testServer = true
+			testServer = false
 		)
 	).startServer()
-	CardTraderScoutBot(telegramApiKey).start()
+	CardTraderScoutBot(
+		webAppUrl = webAppUrl,
+		telegramApiKey = telegramApiKey
+	).start()
 }

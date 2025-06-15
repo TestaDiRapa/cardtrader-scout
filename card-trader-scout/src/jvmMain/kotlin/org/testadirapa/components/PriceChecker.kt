@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.slf4j.LoggerFactory
 import org.testadirapa.cardtrader.Blueprint
 import org.testadirapa.cardtrader.MtgLanguage
 import org.testadirapa.cardtrader.Product
@@ -30,16 +31,15 @@ class PriceChecker private constructor(
 	}
 
 	private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+	private val logger = LoggerFactory.getLogger(PriceChecker::class.java)
 
 	fun launchCheckJob() = scope.launch {
 		while (isActive) {
-			println("Start coroutine")
-			doInfinity("0 */10 * * * *") {
+			doInfinity("0 0 * * * *") {
 				try {
-					println("Start job")
 					checkProducts()
 				} catch (e: Exception) {
-					println("Exception while checking prices ${e.message}")
+					logger.error("Error while checking products", e)
 				}
 			}
 		}
@@ -51,7 +51,7 @@ class PriceChecker private constructor(
 			try {
 				checkProduct(it)
 			} catch (e: Exception) {
-				println("Exception while checking blueprint $it ${e.message}")
+				logger.error("Exception while checking blueprint $it ${e.message}")
 			}
 		}
 	}
@@ -81,7 +81,8 @@ class PriceChecker private constructor(
 				url = AsyncMessageQueue.Url(
 					description = "Go to the listing",
 					url = "https://www.cardtrader.com/cards/${blueprint.slug}"
-				)
+				),
+				imageUrl = blueprint.image?.show?.url?.let { "https://cardtrader.com$it" }
 			)
 		}
 
