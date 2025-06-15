@@ -10,7 +10,7 @@ fun ErrorPage() {
 	BlockWithRedirectButton(
 		backgroundColor = MaterialTheme.colorScheme.errorContainer,
 		title = "Error",
-		text = "Operation not allowed, please go on the telegram bot to use its functionalities.",
+		text = "This page is only accessible through the @CardTraderScoutBot Telegram bot.",
 		textColor = Color.Red,
 	)
 }

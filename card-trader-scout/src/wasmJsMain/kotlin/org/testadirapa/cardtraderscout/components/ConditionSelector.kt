@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,10 +30,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.testadirapa.cardtrader.CardCondition
+import org.testadirapa.cardtraderscout.telegram.webapp.SimpleWebApp
 import org.testadirapa.cardtraderscout.utils.ALL_INTERNAL_ID
 
 @Composable
 fun ConditionSelector(
+	colorScheme: ColorScheme,
+	webApp: SimpleWebApp,
 	onChoose: (Set<CardCondition>) -> Unit,
 ) {
 	var selectedItemIds by remember { mutableStateOf<Set<String>>(emptySet()) }
@@ -50,13 +54,14 @@ fun ConditionSelector(
 			) {
 				Text(
 					text = "Choose the condition(s)",
-					style = MaterialTheme.typography.headlineMedium
+					style = MaterialTheme.typography.headlineMedium,
+					color = colorScheme.onBackground,
 				)
 			}
 
 			val isSelected = selectedItemIds.contains(ALL_INTERNAL_ID)
-			val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.White
-			val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+			val backgroundColor = if (isSelected) colorScheme.surfaceContainerHigh else colorScheme.tertiary
+			val borderColor = if (isSelected) colorScheme.surfaceContainerHigh else Color.LightGray
 
 			Row(
 				modifier = Modifier
@@ -70,6 +75,7 @@ fun ConditionSelector(
 						selectedItems = CardCondition.entries.toSet()
 					}
 					.padding(12.dp),
+				horizontalArrangement = Arrangement.Center,
 				verticalAlignment = Alignment.CenterVertically
 			) {
 				ConditionTag("NA", Color.LightGray)
@@ -79,15 +85,16 @@ fun ConditionSelector(
 				Text(
 					"Any condition",
 					style = MaterialTheme.typography.bodyLarge,
-					modifier = Modifier.weight(1f)
+					modifier = Modifier.weight(1f),
+					color = colorScheme.onBackground
 				)
 			}
 
 			CardCondition.entries.forEach { condition ->
 				val (name, color, shortName) = condition.menuOptions()
 				val isSelected = selectedItemIds.contains(condition.name)
-				val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.White
-				val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+				val backgroundColor = if (isSelected) colorScheme.surfaceContainerHigh else colorScheme.tertiary
+				val borderColor = if (isSelected) colorScheme.surfaceContainerHigh else Color.LightGray
 
 				Row(
 					modifier = Modifier
@@ -119,6 +126,7 @@ fun ConditionSelector(
 							}
 						}
 						.padding(12.dp),
+					horizontalArrangement = Arrangement.Center,
 					verticalAlignment = Alignment.CenterVertically
 				) {
 
@@ -129,7 +137,8 @@ fun ConditionSelector(
 					Text(
 						name,
 						style = MaterialTheme.typography.bodyLarge,
-						modifier = Modifier.weight(1f)
+						modifier = Modifier.weight(1f),
+						color = colorScheme.onBackground
 					)
 				}
 			}
@@ -137,8 +146,9 @@ fun ConditionSelector(
 		}
 
 		FloatingButton(
-			"Select",
-			selectedItems.isNotEmpty()
+			webApp = webApp,
+			text = "Select",
+			show = selectedItems.isNotEmpty()
 		) { onChoose(selectedItems) }
 	}
 }

@@ -1,9 +1,10 @@
 package org.testadirapa.cardtraderscout.pages
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -16,6 +17,7 @@ import org.testadirapa.cardtraderscout.components.BlueprintSelector
 import org.testadirapa.cardtraderscout.components.CardSelection
 import org.testadirapa.cardtraderscout.components.ConditionSelector
 import org.testadirapa.cardtraderscout.components.ErrorBlock
+import org.testadirapa.cardtraderscout.components.FloatingButton
 import org.testadirapa.cardtraderscout.components.LanguageSelector
 import org.testadirapa.cardtraderscout.components.ScryfallSearch
 import org.testadirapa.cardtraderscout.components.SetSelection
@@ -24,20 +26,24 @@ import org.testadirapa.cardtraderscout.components.ThresholdSelector
 import org.testadirapa.cardtraderscout.components.WarningBlock
 import org.testadirapa.cardtraderscout.state.AddWatcherState
 import org.testadirapa.cardtraderscout.state.AddWatcherStateViewModel
+import org.testadirapa.cardtraderscout.telegram.webapp.SimpleWebApp
 
 @Composable
 fun AddWatcherPage(
+	colorScheme: ColorScheme,
+	webApp: SimpleWebApp,
 	viewModel: AddWatcherStateViewModel
 ) {
 	val coroutineScope = rememberCoroutineScope()
 	Column(
 		modifier = Modifier
-			.padding(start = 4.dp, end = 4.dp, top = 0.dp, bottom = 0.dp)
-			.fillMaxSize(),
+			.padding(start = 2.dp, end = 2.dp, top = 2.dp)
+			.fillMaxHeight()
+			.fillMaxWidth(),
 		horizontalAlignment = Alignment.Start,
 	) {
 		if (viewModel.state is AddWatcherState.InitialState) {
-			ScryfallSearch(viewModel)
+			ScryfallSearch(webApp, viewModel)
 		}
 		if (viewModel.state is AddWatcherState.ScryfallEmptyResult) {
 			WarningBlock("No card found")
@@ -51,12 +57,12 @@ fun AddWatcherPage(
 		}
 		if (viewModel.state is AddWatcherState.ChooseCard) {
 			(viewModel.state as? AddWatcherState.ChooseCard)?.let {
-				CardSelection(viewModel, cardsByOracleId = it.cardsByOracleId)
+				CardSelection(colorScheme, webApp, viewModel, cardsByOracleId = it.cardsByOracleId)
 			}
 		}
 		if (viewModel.state is AddWatcherState.ChooseSet) {
 			(viewModel.state as? AddWatcherState.ChooseSet)?.let {
-				SetSelection(viewModel, cardsBySetName = it.cardsBySet)
+				SetSelection(webApp, viewModel, cardsBySetName = it.cardsBySet)
 			}
 		}
 		if (viewModel.state is AddWatcherState.UnknownError) {
@@ -74,22 +80,22 @@ fun AddWatcherPage(
 		}
 		if (viewModel.state is AddWatcherState.Blueprints) {
 			(viewModel.state as? AddWatcherState.Blueprints)?.let {
-				BlueprintSelector(viewModel, blueprints = it.bluePrints)
+				BlueprintSelector(colorScheme, webApp, viewModel, blueprints = it.bluePrints)
 			}
 		}
 		if (viewModel.state is AddWatcherState.BlueprintsSelected) {
 			(viewModel.state as? AddWatcherState.BlueprintsSelected)?.let { state ->
-				ConditionSelector { viewModel.selectConditions(state.blueprints, it) }
+				ConditionSelector(colorScheme, webApp) { viewModel.selectConditions(state.blueprints, it) }
 			}
 		}
 		if (viewModel.state is AddWatcherState.ConditionSelected) {
 			(viewModel.state as? AddWatcherState.ConditionSelected)?.let { state ->
-				LanguageSelector { viewModel.selectLanguages(state, it) }
+				LanguageSelector(colorScheme, webApp) { viewModel.selectLanguages(state, it) }
 			}
 		}
 		if (viewModel.state is AddWatcherState.LanguageSelected) {
 			(viewModel.state as? AddWatcherState.LanguageSelected)?.let { state ->
-				ThresholdSelector { price, cardTraderZeroOnly ->
+				ThresholdSelector(colorScheme, webApp) { price, cardTraderZeroOnly ->
 					coroutineScope.launch {
 						viewModel.confirmCreation(state, price, cardTraderZeroOnly)
 					}
@@ -110,6 +116,11 @@ fun AddWatcherPage(
 				text = "Creation successful, you will be notified when a listing matching your preferences will be published",
 				textColor = Color(0xFF2E7D32),
 			)
+			FloatingButton(
+				webApp,
+				"Close",
+				true
+			) { webApp.close() }
 		}
 		if (viewModel.isLoading) {
 			Spinner()

@@ -3,18 +3,15 @@ package org.testadirapa.telegram.states.addwatcher
 import dev.inmo.tgbotapi.extensions.api.send.send
 import dev.inmo.tgbotapi.extensions.behaviour_builder.DefaultBehaviourContextWithFSM
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
-import dev.inmo.tgbotapi.extensions.utils.types.buttons.urlButton
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.webAppButton
 import dev.inmo.tgbotapi.types.IdChatIdentifier
 import dev.inmo.tgbotapi.types.LinkPreviewOptions
 import dev.inmo.tgbotapi.types.message.content.TextMessage
 import dev.inmo.tgbotapi.types.webapps.WebAppInfo
 import dev.inmo.tgbotapi.utils.row
-import org.testadirapa.components.InteractionCache
 import org.testadirapa.telegram.states.StatefulBotCommand
 import org.testadirapa.telegram.states.BotCommandRegistrar
 import org.testadirapa.telegram.states.BotState
-import java.util.UUID
 
 data class AddWatcherState(
 	override val context: IdChatIdentifier
@@ -31,13 +28,11 @@ data class AddWatcherState(
 			registerState()
 		}
 
-		val url = "https://ab29-2a02-a03f-65ab-de01-3c12-c2aa-9e91-9446.ngrok-free.app?op=new"
+		val url = "https://1964-2a02-a03f-65ab-de01-d484-1e9f-4614-a0b2.ngrok-free.app?op=new"
 
 		context(DefaultBehaviourContextWithFSM<BotState>)
 		override suspend fun registerState() {
 			strictlyOn<AddWatcherState> {
-				val token = UUID.randomUUID().toString()
-				InteractionCache.addInteraction(it.context, token)
 				send(
 					chatId = it.context,
 					replyMarkup = inlineKeyboard {

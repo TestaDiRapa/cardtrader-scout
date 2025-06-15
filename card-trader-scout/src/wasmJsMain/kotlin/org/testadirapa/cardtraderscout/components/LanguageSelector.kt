@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,10 +34,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.testadirapa.cardtrader.MtgLanguage
+import org.testadirapa.cardtraderscout.telegram.webapp.SimpleWebApp
 import org.testadirapa.cardtraderscout.utils.ALL_INTERNAL_ID
 
 @Composable
 fun LanguageSelector(
+	colorScheme: ColorScheme,
+	webApp: SimpleWebApp,
 	onChoose: (Set<MtgLanguage>) -> Unit,
 ) {
 	var selectedIds by remember { mutableStateOf<Set<String>>(emptySet()) }
@@ -49,7 +53,8 @@ fun LanguageSelector(
 			) {
 				Text(
 					text = "Choose the language(s)",
-					style = MaterialTheme.typography.headlineMedium
+					style = MaterialTheme.typography.headlineMedium,
+					color = colorScheme.onBackground,
 				)
 			}
 			LazyVerticalGrid(
@@ -61,6 +66,7 @@ fun LanguageSelector(
 			) {
 				item {
 					LanguageElement(
+						colorScheme = colorScheme,
 						emoji = "🎌",
 						language = "Any",
 						isSelected = selectedIds.contains(ALL_INTERNAL_ID),
@@ -72,6 +78,7 @@ fun LanguageSelector(
 				items(MtgLanguage.entries) { language ->
 					val (emoji, languageName) = language.toSelectorParameters()
 					LanguageElement(
+						colorScheme = colorScheme,
 						emoji = emoji,
 						language = languageName,
 						isSelected = selectedIds.contains(language.name),
@@ -96,21 +103,23 @@ fun LanguageSelector(
 		}
 		Spacer(modifier = Modifier.height(42.dp))
 		FloatingButton(
-			"Select",
-			selectedIds.isNotEmpty()
+			webApp,
+			text = "Select",
+			show = selectedIds.isNotEmpty()
 		) { onChoose(selectedLanguages) }
 	}
 }
 
 @Composable
 private fun LanguageElement(
+	colorScheme: ColorScheme,
 	emoji: String,
 	language: String,
 	isSelected: Boolean,
 	onClick: () -> Unit,
 ) {
-	val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.White
-	val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+	val backgroundColor = if (isSelected) colorScheme.surfaceContainerHigh else colorScheme.tertiary
+	val borderColor = if (isSelected) colorScheme.surfaceContainerHigh else Color.LightGray
 	Row(
 		modifier = Modifier
 			.clip(RoundedCornerShape(16.dp))
@@ -120,19 +129,17 @@ private fun LanguageElement(
 			.padding(12.dp),
 		verticalAlignment = Alignment.CenterVertically
 	) {
-		Text(
-			text = emoji,
-			fontSize = 24.sp,
-			textAlign = TextAlign.Center
-		)
-
-
-		Spacer(modifier = Modifier.width(8.dp))
-
+//		Text(
+//			text = emoji,
+//			fontSize = 24.sp,
+//			textAlign = TextAlign.Center
+//		)
+//		Spacer(modifier = Modifier.width(8.dp))
 		Text(
 			language,
 			style = MaterialTheme.typography.bodyLarge,
-			modifier = Modifier.weight(1f)
+			modifier = Modifier.weight(1f),
+			color = colorScheme.onBackground,
 		)
 	}
 }

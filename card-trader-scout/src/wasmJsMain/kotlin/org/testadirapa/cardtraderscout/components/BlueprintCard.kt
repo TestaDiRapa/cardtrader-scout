@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,14 +30,15 @@ import org.testadirapa.cardtraderscout.utils.toProxiedImageUrl
 
 @Composable
 fun BlueprintCard(
-	chatId: Long,
+	colorScheme: ColorScheme,
+	baseUrl: String,
 	token: String,
 	blueprint: Blueprint,
 	isSelected: Boolean,
 	onClick: () -> Unit
 ) {
-	val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.White
-	val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+	val backgroundColor = if (isSelected) colorScheme.surfaceContainerHigh else colorScheme.tertiary
+	val borderColor = if (isSelected) colorScheme.surfaceContainerHigh else Color.LightGray
 	Box(
 		modifier = Modifier
 			.clip(RoundedCornerShape(16.dp))
@@ -51,12 +53,16 @@ fun BlueprintCard(
 			modifier = Modifier.fillMaxWidth()
 		) {
 			AsyncImage(
-				model = blueprint.image?.show?.toProxiedImageUrl(chatId, token),
+				model = blueprint.image?.show?.toProxiedImageUrl(baseUrl, token),
 				contentDescription = null,
 				modifier = Modifier.size(128.dp),
 				contentScale = ContentScale.Fit,
 			)
-			Text(blueprint.name, fontWeight = FontWeight.SemiBold)
+			Text(
+				text = blueprint.name,
+				fontWeight = FontWeight.SemiBold,
+				color = colorScheme.onBackground
+			)
 		}
 
 		if (isSelected) {

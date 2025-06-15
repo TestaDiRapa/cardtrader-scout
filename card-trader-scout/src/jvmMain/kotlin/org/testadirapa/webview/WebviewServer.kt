@@ -1,5 +1,7 @@
 package org.testadirapa.webview
 
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import dev.inmo.tgbotapi.utils.TelegramAPIUrlsKeeper
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
@@ -11,7 +13,6 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.http.content.default
 import io.ktor.server.http.content.staticFiles
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.NotFoundException
@@ -19,7 +20,6 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.receive
-import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondOutputStream
 import io.ktor.server.routing.RoutingContext
@@ -27,9 +27,10 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import io.ktor.utils.io.jvm.javaio.copyTo
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.testadirapa.components.AsyncMessageQueue
-import org.testadirapa.components.InteractionCache
 import org.testadirapa.dto.NewWatcher
 import org.testadirapa.dto.WebAppDataWrapper
 import org.testadirapa.services.CardTraderService
@@ -37,6 +38,9 @@ import org.testadirapa.services.CouchDbService
 import org.testadirapa.services.ScryfallService
 import java.io.File
 import java.io.IOException
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
+import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 class WebviewServer(
@@ -46,6 +50,10 @@ class WebviewServer(
 	private val urlKeeper: TelegramAPIUrlsKeeper
 ) {
 
+	private val verifiedHash: Cache<String, Boolean> = Caffeine.newBuilder()
+		.expireAfterWrite(10, TimeUnit.MINUTES)
+		.build()
+
 	private class AccessDeniedException(msg: String) : Exception(msg)
 
 	private inline fun guarded(condition: Boolean, lazyMessage: () -> String) {
@@ -54,17 +62,13 @@ class WebviewServer(
 		}
 	}
 
-	private fun RoutingContext.authenticate(): Pair<Long, String> {
-		val chatId = requireNotNull(call.request.queryParameters["chatId"]?.toLongOrNull()) {
-			"Invalid chatId"
-		}
+	private fun RoutingContext.authenticate() {
 		val token = requireNotNull(call.request.queryParameters["token"]) {
 			"Invalid token"
 		}
-		guarded(InteractionCache.exists(chatId, token)) {
+		guarded(verifiedHash.getIfPresent(token) == true) {
 			"Invalid interaction"
 		}
-		return chatId to token
 	}
 
 	private val staticFolder = File("/Users/vincenzoclaudiopierro/Documents/GitHub/cardtrader-scout/card-trader-scout/build/dist/wasmJs/productionExecutable")
@@ -77,10 +81,11 @@ class WebviewServer(
 			post("/check") {
 				val webAppCheckData = call.receive<WebAppDataWrapper>()
 				val isSafe = urlKeeper.checkWebAppData(webAppCheckData.data, webAppCheckData.hash)
+				verifiedHash.put(webAppCheckData.hash, isSafe)
 				call.respond(HttpStatusCode.OK, isSafe)
 			}
 			get("/scryfall") {
-//				authenticate()
+				authenticate()
 				val query = call.request.queryParameters["q"]?.takeIf { it.isNotBlank()}
 				require(!query.isNullOrBlank()) { "Query is null or blank" }
 				val result = scryfallService.searchCards(query)
@@ -90,7 +95,7 @@ class WebviewServer(
 				call.respond(result.data)
 			}
 			get("/blueprints") {
-//				authenticate()
+				authenticate()
 				val query = call.request.queryParameters["name"]?.takeIf { it.isNotBlank()}
 				require(!query.isNullOrBlank()) { "Name is null or blank" }
 				val blueprintsByExpansion = cardTraderService.searchBlueprintsByNameAndExpansionId(
@@ -102,7 +107,7 @@ class WebviewServer(
 				call.respond(blueprintsByExpansion)
 			}
 			get("/ctImage/{path...}") {
-//				authenticate()
+				authenticate()
 				val path = requireNotNull(call.parameters.getAll("path")?.joinToString("/")) {
 					"Path cannot be null"
 				}
@@ -119,9 +124,14 @@ class WebviewServer(
 				}
 			}
 			post("/watcher") {
-				val (chatId, _) = authenticate()
 				val newWatcher = call.receive<NewWatcher>()
-				InteractionCache.removeIfPresent(chatId)
+				guarded(
+					urlKeeper.checkWebAppData(newWatcher.validationData.data, newWatcher.validationData.hash)
+				) {
+					"Invalid interaction"
+				}
+				verifiedHash.invalidate(newWatcher.validationData.hash)
+				val chatId = newWatcher.validationData.extractUser().id
 				couchDbService.createWatchers(chatId, newWatcher)
 				AsyncMessageQueue.sendMessage(chatId, "Watcher successfully created")
 				call.respond(HttpStatusCode.NoContent)
@@ -174,5 +184,26 @@ class WebviewServer(
 			).start(wait = true)
 		}
 	}
+
+	private fun WebAppDataWrapper.extractUser(): User =
+		data.split("&").firstNotNullOf { param ->
+			val (key, value) = param.split("=", limit = 2)
+			if (key == "user") {
+				URLDecoder.decode(value, StandardCharsets.UTF_8.name())
+			} else null
+		}.let {
+			Json.decodeFromString(it)
+		}
+
+	@Serializable
+	private data class User(
+		val id: Long,
+		@SerialName("first_name") val firstName: String? = null,
+		@SerialName("last_name") val lastName: String? = null,
+		val username: String? = null,
+		@SerialName("language_code") val languageCode: String? = null,
+		@SerialName("allows_write_to_pm") val allowsWriteToPm: Boolean = false,
+		@SerialName("photo_url") val photoUrl: String? = null,
+	)
 
 }

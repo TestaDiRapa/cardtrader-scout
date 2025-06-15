@@ -1,19 +1,8 @@
 package org.testadirapa.cardtraderscout.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,14 +13,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.testadirapa.cardtraderscout.state.AddWatcherStateViewModel
+import org.testadirapa.cardtraderscout.telegram.webapp.SimpleWebApp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScryfallSearch(state: AddWatcherStateViewModel) {
+fun ScryfallSearch(
+	webApp: SimpleWebApp,
+	state: AddWatcherStateViewModel
+) {
 	var query by remember { mutableStateOf("") }
 	val coroutineScope = rememberCoroutineScope()
 
@@ -54,30 +45,20 @@ fun ScryfallSearch(state: AddWatcherStateViewModel) {
 			},
 			label = { Text("Card name or Scryfall query") },
 			placeholder = { Text("Black Lotus") },
-			modifier = Modifier.weight(1f),
+			modifier = Modifier.weight(0.9f),
 		)
-		Spacer(modifier = Modifier.width(8.dp))
-		Box(modifier = Modifier.padding(top = 10.dp)) {
-			IconButton(
-				enabled = query.trim().length >= 3,
-				onClick = onSearch,
-				modifier = Modifier
-					.size(52.dp)
-					.clip(CircleShape)
-					.background(
-						if (query.trim().length >= 3) MaterialTheme.colorScheme.primaryContainer
-						else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-					)
-			) {
-				Icon(
-					imageVector = Icons.Default.Search,
-					contentDescription = "Search",
-					tint =
-						if (query.trim().length >= 3) MaterialTheme.colorScheme.primary
-						else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
-					modifier = Modifier.size(24.dp)
-				)
-			}
+	}
+	webApp.mainButton.apply {
+		setText("Search")
+		onClick {
+			onSearch()
+		}
+		if (query.trim().length >= 3) {
+			enable()
+			show()
+		} else {
+			disable()
+			hide()
 		}
 	}
 }

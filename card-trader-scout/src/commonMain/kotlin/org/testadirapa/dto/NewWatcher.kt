@@ -11,5 +11,6 @@ data class NewWatcher(
 	val conditions: Set<CardCondition>,
 	val languages: Set<MtgLanguage>,
 	val priceThreshold: Double,
-	val cardTraderZeroOnly: Boolean
+	val cardTraderZeroOnly: Boolean,
+	val validationData: WebAppDataWrapper
 )

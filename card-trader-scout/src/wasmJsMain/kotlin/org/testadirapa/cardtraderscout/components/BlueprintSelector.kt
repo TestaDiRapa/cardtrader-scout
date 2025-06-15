@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,9 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.testadirapa.cardtrader.Blueprint
 import org.testadirapa.cardtraderscout.state.AddWatcherStateViewModel
+import org.testadirapa.cardtraderscout.telegram.webapp.SimpleWebApp
 
 @Composable
 fun BlueprintSelector(
+	colorScheme: ColorScheme,
+	webApp: SimpleWebApp,
 	viewModel: AddWatcherStateViewModel,
 	blueprints: List<Blueprint>,
 ) {
@@ -36,8 +40,9 @@ fun BlueprintSelector(
 		) {
 			items(blueprints) { blueprint ->
 				BlueprintCard(
-					chatId = viewModel.chatId,
-					token = viewModel.token,
+					colorScheme = colorScheme,
+					baseUrl = viewModel.baseUrl,
+					token = viewModel.hash,
 					blueprint = blueprint,
 					isSelected = selectedIds.contains(blueprint.id),
 					onClick = {
@@ -52,6 +57,7 @@ fun BlueprintSelector(
 		}
 		Spacer(modifier = Modifier.height(42.dp))
 		FloatingButton(
+			webApp,
 			"Select",
 			selectedIds.isNotEmpty()
 		) {

@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -36,13 +37,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import org.testadirapa.cardtrader.Blueprint
+import org.testadirapa.cardtraderscout.telegram.webapp.SimpleWebApp
 import org.testadirapa.cardtraderscout.utils.ALL_INTERNAL_ID
 import org.testadirapa.cardtraderscout.utils.toProxiedImageUrl
 import org.testadirapa.scryfall.ScryfallCard
 
 @Composable
 inline fun <reified T> CardSelectionMenu(
-	chatId: Long,
+	colorScheme: ColorScheme,
+	webApp: SimpleWebApp,
+	baseUrl: String,
 	token: String,
 	items: Map<String, List<T>>,
 	includeAllOption: Boolean,
@@ -62,8 +66,8 @@ inline fun <reified T> CardSelectionMenu(
 		) {
 			if (includeAllOption) {
 				val isSelected = selectedItemId == ALL_INTERNAL_ID
-				val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.White
-				val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+				val backgroundColor = if (isSelected) colorScheme.surfaceContainerHigh else colorScheme.tertiary
+				val borderColor = if (isSelected) colorScheme.surfaceContainerHigh else Color.LightGray
 
 				Row(
 					modifier = Modifier
@@ -89,15 +93,16 @@ inline fun <reified T> CardSelectionMenu(
 					Text(
 						"Select all",
 						style = MaterialTheme.typography.bodyLarge,
-						modifier = Modifier.weight(1f)
+						modifier = Modifier.weight(1f),
+						color = colorScheme.onBackground,
 					)
 				}
 			}
 
 			items.forEach { (selector, cards) ->
 				val isSelected = selector == selectedItemId
-				val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.White
-				val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+				val backgroundColor = if (isSelected) colorScheme.surfaceContainerHigh else colorScheme.tertiary
+				val borderColor = if (isSelected) colorScheme.surfaceContainerHigh else Color.LightGray
 
 				Row(
 					modifier = Modifier
@@ -126,14 +131,15 @@ inline fun <reified T> CardSelectionMenu(
 					Text(
 						labelSelector(selector, cards),
 						style = MaterialTheme.typography.bodyLarge,
-						modifier = Modifier.weight(1f)
+						modifier = Modifier.weight(1f),
+						color = colorScheme.onBackground,
 					)
 
 					Row(
 						horizontalArrangement = Arrangement.spacedBy(2.dp),
 						verticalAlignment = Alignment.CenterVertically
 					) {
-						val cardUrls = cards.mapNotNull { it.getImageUrl(chatId, token) }
+						val cardUrls = cards.mapNotNull { it.getImageUrl(baseUrl, token) }
 						cardUrls.take(2).forEach { url ->
 							AsyncImage(
 								model = url,
@@ -156,6 +162,7 @@ inline fun <reified T> CardSelectionMenu(
 		}
 
 		FloatingButton(
+			webApp,
 			"Select",
 			selectedItems.isNotEmpty()
 		) { onChoose(selectedItems) }
@@ -164,8 +171,8 @@ inline fun <reified T> CardSelectionMenu(
 
 
 @Composable
-inline fun <reified T> T.getImageUrl(chatId: Long, token: String): String? = when (this) {
-	is Blueprint -> image?.preview?.toProxiedImageUrl(chatId, token)
+inline fun <reified T> T.getImageUrl(baseUrl: String, token: String): String? = when (this) {
+	is Blueprint -> image?.preview?.toProxiedImageUrl(baseUrl, token)
 	is ScryfallCard -> imageUris?.small
 	else -> null
 }

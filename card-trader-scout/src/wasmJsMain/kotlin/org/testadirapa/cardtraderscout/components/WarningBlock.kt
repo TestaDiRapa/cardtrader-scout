@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.TextStyle
 
 @Composable
 fun WarningBlock(
@@ -21,15 +22,15 @@ fun WarningBlock(
 		modifier = modifier
 			.fillMaxWidth()
 			.padding(16.dp)
-			.background(color = Color(0xFFFFF8D1), shape = RoundedCornerShape(8.dp)) // soft yellow background
+			.background(color = Color(0xFFFFF8D1), shape = RoundedCornerShape(8.dp))
 			.padding(16.dp),
 		contentAlignment = Alignment.Center
 	) {
 		BasicText(
 			text = message,
 			modifier = Modifier.fillMaxWidth(),
-			style = androidx.compose.ui.text.TextStyle(
-				color = Color(0xFF856404), // dark yellow-brown text
+			style = TextStyle(
+				color = Color(0xFF856404),
 				fontSize = 16.sp,
 				textAlign = TextAlign.Center
 			)

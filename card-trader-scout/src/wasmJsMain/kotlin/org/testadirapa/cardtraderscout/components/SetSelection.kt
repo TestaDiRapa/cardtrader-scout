@@ -5,14 +5,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.testadirapa.cardtrader.Blueprint
 import org.testadirapa.cardtraderscout.state.AddWatcherStateViewModel
+import org.testadirapa.cardtraderscout.telegram.webapp.SimpleWebApp
 
 @Composable
 fun SetSelection(
+	webApp: SimpleWebApp,
 	viewModel: AddWatcherStateViewModel,
 	cardsBySetName: Map<String, List<Blueprint>>
 ){
@@ -27,8 +30,10 @@ fun SetSelection(
 			)
 		}
 		CardSelectionMenu(
-			chatId = viewModel.chatId,
-			token = viewModel.token,
+			colorScheme = colorScheme,
+			webApp = webApp,
+			baseUrl = viewModel.baseUrl,
+			token = viewModel.hash,
 			items = cardsBySetName,
 			includeAllOption = true,
 			labelSelector = { selector, _ -> selector }

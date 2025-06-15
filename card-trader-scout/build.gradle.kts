@@ -19,12 +19,12 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        outputModuleName = "webview"
+        outputModuleName = "card-trader-scout"
         browser {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
             commonWebpackConfig {
-                outputFileName = "webview.js"
+                outputFileName = "card-trader-scout.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
                     static = (static ?: mutableListOf()).apply {
                         add(rootDirPath)
@@ -40,7 +40,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(compose.runtime)
-                implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.ui)
                 implementation(compose.components.resources)
@@ -60,8 +59,18 @@ kotlin {
             }
         }
 
+//        jsMain {
+//            dependencies {
+//                implementation(compose.html.core)
+//                implementation(libs.telegram.bot.webapps)
+//            }
+//        }
+
         wasmJsMain {
             dependencies {
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
                 implementation(libs.bundles.coil)
                 implementation(libs.compose.icons)
                 implementation(libs.androidx.lifecycle.viewmodel)

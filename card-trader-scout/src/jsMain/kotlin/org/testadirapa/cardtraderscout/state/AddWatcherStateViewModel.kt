@@ -3,7 +3,6 @@ package org.testadirapa.cardtraderscout.state
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
@@ -19,14 +18,13 @@ import org.testadirapa.cardtraderscout.http.HttpUtils.client
 import org.testadirapa.cardtraderscout.http.HttpUtils.wrap
 import org.testadirapa.cardtraderscout.http.HttpUtils.wrapNoContent
 import org.testadirapa.dto.NewWatcher
-import org.testadirapa.dto.WebAppDataWrapper
 import org.testadirapa.scryfall.ScryfallCard
 
 class AddWatcherStateViewModel(
-	val baseUrl: String,
+	val backendUrl: String,
 	val initData: String,
-	val hash: String,
-) : ViewModel() {
+	val hash: String
+) {
 	var state by mutableStateOf<AddWatcherState>(AddWatcherState.Start)
 		private set
 	var isLoading by mutableStateOf(false)
@@ -36,7 +34,7 @@ class AddWatcherStateViewModel(
 		isLoading = true
 		val result = client.get {
 			url {
-				takeFrom("$baseUrl/scryfall")
+				takeFrom("$backendUrl/scryfall")
 				parameter("q", query)
 				parameter("token", hash)
 			}
@@ -84,7 +82,7 @@ class AddWatcherStateViewModel(
 		isLoading = true
 		val result = client.post {
 			url {
-				takeFrom("$baseUrl/watcher")
+				takeFrom("$backendUrl/watcher")
 				parameter("token", hash)
 			}
 			contentType(ContentType.Application.Json)
@@ -95,7 +93,6 @@ class AddWatcherStateViewModel(
 					languages = currentSate.languages,
 					priceThreshold = price,
 					cardTraderZeroOnly = cardTraderZeroOnly,
-					validationData = WebAppDataWrapper(initData, hash)
 				)
 			)
 		}.wrapNoContent()
@@ -109,7 +106,7 @@ class AddWatcherStateViewModel(
 		isLoading = true
 		val result = client.get {
 			url {
-				takeFrom("$baseUrl/blueprints")
+				takeFrom("$backendUrl/blueprints")
 				parameter("name", cardName)
 				parameter("token", hash)
 			}

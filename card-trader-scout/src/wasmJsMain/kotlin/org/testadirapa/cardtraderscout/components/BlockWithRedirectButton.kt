@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,7 +18,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.browser.window
 
 @Composable
 fun BlockWithRedirectButton(
@@ -54,11 +52,6 @@ fun BlockWithRedirectButton(
 				)
 			)
 			Spacer(modifier = Modifier.height(16.dp))
-			Button(onClick = {
-//				window.open("https://t.me/CardTraderScoutBot", "_blank")
-			}) {
-				Text("CardTraderScoutBot")
-			}
 		}
 	}
 }

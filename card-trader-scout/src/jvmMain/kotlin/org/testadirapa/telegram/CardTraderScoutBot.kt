@@ -61,11 +61,6 @@ class CardTraderScoutBot(
 			listenForAsyncMessages()
 			ErrorState.registerState()
 			AddWatcherState.register()
-
-
-			allUpdatesFlow.subscribeLoggingDropExceptions(scope = this) {
-				println(it)
-			}
 		}.second.join()
 	}
 

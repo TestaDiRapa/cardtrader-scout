@@ -6,9 +6,12 @@ import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.testadirapa.cardtraderscout.telegram.webapp.SimpleWebApp
 
 @Composable
 fun ThresholdSelector(
+	colorScheme: ColorScheme,
+	webApp: SimpleWebApp,
 	onClick: (Double, Boolean) -> Unit,
 ) {
 	var amount by remember { mutableStateOf("") }
@@ -19,7 +22,10 @@ fun ThresholdSelector(
 		.padding(top = 24.dp, start = 8.dp, end = 8.dp)
 	) {
 		Column {
-			Text("Receive a notification if the price drops under:")
+			Text(
+				text = "Receive a notification if the price drops under:",
+				color = colorScheme.onBackground,
+			)
 			Spacer(modifier = Modifier.height(8.dp))
 			OutlinedTextField(
 				value = amount,
@@ -47,10 +53,14 @@ fun ThresholdSelector(
 					}
 				)
 				Spacer(modifier = Modifier.width(16.dp))
-				Text("Card Trader Zero Only")
+				Text(
+					text = "Card Trader Zero Only",
+					color = colorScheme.onBackground,
+				)
 			}
 		}
 		FloatingButton(
+			webApp = webApp,
 			text = "Confirm",
 			amount.toDoubleOrNull()?.let {
 				it > 0.0
