@@ -5,36 +5,38 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.attributes.*
+import org.testadirapa.cardtraderscout.components.ScryfallSearch
+import org.testadirapa.cardtraderscout.components.Spinner
 import org.testadirapa.cardtraderscout.state.AddWatcherState
 import org.testadirapa.cardtraderscout.state.AddWatcherStateViewModel
+import org.testadirapa.cardtraderscout.theme.ColorTheme
 
 @Composable
-fun AddWatcherPage(viewModel: AddWatcherStateViewModel) {
+fun AddWatcherPage(
+	colorScheme: ColorTheme.ColorSchemeParams,
+	viewModel: AddWatcherStateViewModel
+) {
 	val coroutineScope = rememberCoroutineScope()
 
-	Div({
-		style {
-			paddingLeft(4.px)
-			paddingRight(4.px)
-			width(95.percent)
+	when (val state = viewModel.state) {
+		is AddWatcherState.InitialState -> {
+			ScryfallSearch(colorScheme, viewModel)
 		}
-	}) {
-//		when (val state = viewModel.state) {
-//			is AddWatcherState.InitialState -> {
-//				ScryfallSearch(viewModel)
-//			}
 
-//			is AddWatcherState.ScryfallEmptyResult -> {
+		is AddWatcherState.ScryfallEmptyResult -> {
+			Text("No card")
 //				WarningBlock("No card found")
-//			}
-//
-//			is AddWatcherState.ScryfallError -> {
+		}
+
+		is AddWatcherState.ScryfallError -> {
+			Text("Error")
 //				ErrorBlock("Error ${state.error.code} while querying scryfall: ${state.error.message}")
-//			}
-//
-//			is AddWatcherState.ChooseCard -> {
+		}
+
+		is AddWatcherState.ChooseCard -> {
+			Text("Stuff")
 //				CardSelection(viewModel, cardsByOracleId = state.cardsByOracleId)
-//			}
+		}
 //
 //			is AddWatcherState.ChooseSet -> {
 //				SetSelection(viewModel, cardsBySetName = state.cardsBySet)
@@ -88,10 +90,9 @@ fun AddWatcherPage(viewModel: AddWatcherStateViewModel) {
 //					textColorHex = "#2E7D32"
 //				)
 //			}
-//		}
-//
-//		if (viewModel.isLoading) {
-//			Spinner()
-//		}
+		else -> Spinner()
+	}
+	if (viewModel.isLoading) {
+		Spinner()
 	}
 }

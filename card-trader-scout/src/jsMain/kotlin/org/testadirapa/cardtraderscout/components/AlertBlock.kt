@@ -1,29 +1,28 @@
-package org.testadirapa.cardtraderscout.pages
+package org.testadirapa.cardtraderscout.components
 
 import androidx.compose.runtime.Composable
-import dev.inmo.tgbotapi.webapps.HEXColor
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun AlertBlock(
-	backgroundColor: HEXColor,
+	backgroundColor: CSSColorValue,
 	title: String,
 	text: String,
-	textColor: HEXColor
+	textColor: CSSColorValue,
 ) {
 	Div({
 		style {
 			width(95.percent)
 			padding(16.px)
-			backgroundColor(Color(backgroundColor))
+			backgroundColor(backgroundColor)
 			borderRadius(8.px)
 			textAlign("center")
 		}
 	}) {
 		H3({
 			style {
-				color(Color(textColor))
+				color(textColor)
 				fontWeight("bold")
 			}
 		}) {
@@ -33,7 +32,7 @@ fun AlertBlock(
 		Div({
 			style {
 				marginTop(16.px)
-				color(Color(textColor))
+				color(textColor)
 				fontSize(16.px)
 			}
 		}) {
