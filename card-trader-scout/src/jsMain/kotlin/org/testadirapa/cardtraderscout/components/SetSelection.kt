@@ -36,12 +36,11 @@ fun SetSelection(
 		}
 	}
 
-	CardSelectionMenu(
+	SetSelectionMenu(
 		colorScheme = colorScheme,
 		baseUrl = viewModel.backendUrl,
 		token = viewModel.hash,
 		items = cardsBySetName,
-		includeAllOption = false,
 		labelSelector = { selector, _ -> selector }
 	) { chosenSets ->
 		viewModel.setBlueprints(cardsBySetName.filterKeys { it in chosenSets }.values.flatten())

@@ -45,7 +45,6 @@ fun CardSelection(
 			baseUrl = viewModel.backendUrl,
 			token = viewModel.hash,
 			items = cardsByOracleId,
-			includeAllOption = false,
 			labelSelector = { _, cards -> cards.first().name }
 		) { selected ->
 			coroutineScope.launch {
