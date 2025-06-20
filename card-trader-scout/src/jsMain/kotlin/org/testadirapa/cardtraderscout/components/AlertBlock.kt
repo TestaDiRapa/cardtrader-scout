@@ -7,31 +7,38 @@ import org.jetbrains.compose.web.dom.*
 @Composable
 fun AlertBlock(
 	backgroundColor: CSSColorValue,
-	title: String,
+	title: String? = null,
 	text: String,
 	textColor: CSSColorValue,
+	marginTop: CSSNumericValue<out CSSUnit>? = null,
 ) {
 	Div({
 		style {
-			width(95.percent)
+			width(90.percent)
 			padding(16.px)
 			backgroundColor(backgroundColor)
 			borderRadius(8.px)
+			marginLeft(4.px)
 			textAlign("center")
+			if (marginTop != null) {
+				marginTop(marginTop)
+			}
 		}
 	}) {
-		H3({
-			style {
-				color(textColor)
-				fontWeight("bold")
+		if (title != null) {
+			H3({
+				style {
+					color(textColor)
+					fontWeight("bold")
+					marginBottom(16.px)
+				}
+			}) {
+				Text(title)
 			}
-		}) {
-			Text(title)
 		}
-
 		Div({
 			style {
-				marginTop(16.px)
+
 				color(textColor)
 				fontSize(16.px)
 			}

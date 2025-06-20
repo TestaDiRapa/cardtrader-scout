@@ -1,7 +1,6 @@
 package org.testadirapa.cardtraderscout.components
 
 import androidx.compose.runtime.*
-import dev.inmo.tgbotapi.webapps.webApp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.placeholder
@@ -55,18 +54,9 @@ fun ScryfallSearch(
 			}
 		}
 
-		webApp.mainButton.apply {
-			setText("Search")
-			onClick {
-				onSearch()
-			}
-			if (query.trim().length >= 3) {
-				enable()
-				show()
-			} else {
-				disable()
-				hide()
-			}
-		}
+		FloatingButton(
+			text = "Search",
+			show = query.trim().length >= 3
+		) { onSearch() }
 	}
 }

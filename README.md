@@ -14,4 +14,3 @@
 ## Warning 
 This bot is still in a development stage and it is missing some features:
 - A command to edit/delete your watchers.
-- General performance improvement for the Telegram WebApp.

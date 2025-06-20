@@ -36,7 +36,7 @@ class CardTraderScoutBot(
 					replyMarkup = message.url?.let { url ->
 						inlineKeyboard {
 							row {
-								urlButton(text = url.url, url = url.url)
+								urlButton(text = url.description, url = url.url)
 							}
 						}
 					},
