@@ -1,11 +1,14 @@
 package org.testadirapa.components
 
 import dev.inmo.tgbotapi.types.ChatId
-import dev.inmo.tgbotapi.types.LinkPreviewOptions
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.channels.Channel
+import org.slf4j.LoggerFactory
+import kotlin.math.log
 
 object AsyncMessageQueue {
+
+	private val logger = LoggerFactory.getLogger(AsyncMessageQueue::class.java)
 
 	data class Url(val description: String, val url: String)
 
@@ -16,6 +19,7 @@ object AsyncMessageQueue {
 		val imageUrl: String? = null,
 	)
 	private val messageChannel = Channel<Message>()
+	private val errorChannel = Channel<Exception>()
 
 	suspend fun sendMessage(
 		chatId: Long,
@@ -35,7 +39,25 @@ object AsyncMessageQueue {
 
 	suspend fun onNewMessage(block: suspend (Message) -> Unit) {
 		for (message in messageChannel) {
-			block(message)
+			try {
+				block(message)
+			} catch (e: Exception) {
+				errorChannel.send(e)
+			}
+		}
+	}
+
+	suspend fun sendError(exception: Exception) {
+		errorChannel.send(exception)
+	}
+
+	suspend fun onNewException(block: suspend (Exception) -> Unit) {
+		for (exception in errorChannel) {
+			try {
+				block(exception)
+			} catch (e: Exception) {
+				logger.error("Error in error queue", e)
+			}
 		}
 	}
 

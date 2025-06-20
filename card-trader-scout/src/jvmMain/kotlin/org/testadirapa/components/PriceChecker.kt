@@ -40,6 +40,7 @@ class PriceChecker private constructor(
 					checkProducts()
 				} catch (e: Exception) {
 					logger.error("Error while checking products", e)
+					AsyncMessageQueue.sendError(e)
 				}
 			}
 		}
@@ -52,6 +53,7 @@ class PriceChecker private constructor(
 				checkProduct(it)
 			} catch (e: Exception) {
 				logger.error("Exception while checking blueprint $it ${e.message}")
+				AsyncMessageQueue.sendError(e)
 			}
 		}
 	}
