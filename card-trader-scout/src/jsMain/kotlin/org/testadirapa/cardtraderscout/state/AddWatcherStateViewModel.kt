@@ -18,6 +18,7 @@ import org.testadirapa.cardtraderscout.http.HttpUtils.client
 import org.testadirapa.cardtraderscout.http.HttpUtils.wrap
 import org.testadirapa.cardtraderscout.http.HttpUtils.wrapNoContent
 import org.testadirapa.dto.NewWatcher
+import org.testadirapa.dto.WebAppDataWrapper
 import org.testadirapa.scryfall.ScryfallCard
 
 class AddWatcherStateViewModel(
@@ -93,6 +94,7 @@ class AddWatcherStateViewModel(
 					languages = currentSate.languages,
 					priceThreshold = price,
 					cardTraderZeroOnly = cardTraderZeroOnly,
+					validationData = WebAppDataWrapper(initData, hash)
 				)
 			)
 		}.wrapNoContent()

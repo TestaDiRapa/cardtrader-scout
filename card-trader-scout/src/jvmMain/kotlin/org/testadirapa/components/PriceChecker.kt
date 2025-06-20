@@ -40,6 +40,7 @@ class PriceChecker private constructor(
 					checkProducts()
 				} catch (e: Exception) {
 					logger.error("Error while checking products", e)
+					AsyncMessageQueue.sendError(e)
 				}
 			}
 		}
@@ -52,6 +53,7 @@ class PriceChecker private constructor(
 				checkProduct(it)
 			} catch (e: Exception) {
 				logger.error("Exception while checking blueprint $it ${e.message}")
+				AsyncMessageQueue.sendError(e)
 			}
 		}
 	}
@@ -79,7 +81,7 @@ class PriceChecker private constructor(
 				chatId = watcher.chatId,
 				text = generateMatchMessage(blueprint, product),
 				url = AsyncMessageQueue.Url(
-					description = "Go to the listing",
+					description = "Go to CardTrader",
 					url = "https://www.cardtrader.com/cards/${blueprint.slug}"
 				),
 				imageUrl = blueprint.image?.show?.url?.let { "https://cardtrader.com$it" }

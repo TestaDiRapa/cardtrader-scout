@@ -8,6 +8,7 @@ import dev.inmo.tgbotapi.extensions.behaviour_builder.telegramBotWithBehaviourAn
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.inlineKeyboard
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.urlButton
 import dev.inmo.tgbotapi.requests.abstracts.InputFile
+import dev.inmo.tgbotapi.types.ChatId
 import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,7 @@ import org.testadirapa.telegram.states.ErrorState
 import org.testadirapa.telegram.states.addwatcher.AddWatcherState
 
 class CardTraderScoutBot(
+	private val logChat: ChatId,
 	private val webAppUrl: String,
 	private val telegramApiKey: String
 ) {
@@ -36,7 +38,7 @@ class CardTraderScoutBot(
 					replyMarkup = message.url?.let { url ->
 						inlineKeyboard {
 							row {
-								urlButton(text = url.url, url = url.url)
+								urlButton(text = url.description, url = url.url)
 							}
 						}
 					},
@@ -57,11 +59,23 @@ class CardTraderScoutBot(
 		}
 	}
 
+	fun BehaviourContext.listenForErrors() = botScope.launch {
+		AsyncMessageQueue.onNewException { e ->
+			sendMessage(
+				chatId = logChat,
+				text = e.stackTraceToString()
+			)
+		}
+	}
+
 	suspend fun start() {
 		telegramBotWithBehaviourAndFSMAndStartLongPolling<BotState>(
 			telegramApiKey,
 			CoroutineScope(Dispatchers.IO),
 			onStateHandlingErrorHandler = { state, e ->
+				if (e is Exception) {
+					AsyncMessageQueue.sendError(e)
+				}
 				when (state) {
 					is AddWatcherState -> {
 						logger.error("Error in AddWatcher state", e)
@@ -79,6 +93,7 @@ class CardTraderScoutBot(
 			}
 		) {
 			listenForAsyncMessages()
+			listenForErrors()
 			ErrorState.registerState()
 			AddWatcherState.register(webAppUrl)
 			setMyCommands(

@@ -10,7 +10,12 @@ services:
             - ./couchdb/data/:/opt/couchdb/data
 
     card-trader-scout:
-        image: card-trader-scout:0.0.1
+        build:
+            context: .
+            tags:
+                -   "card-trader-scout:${GIT_COMMIT}"
+        depends_on:
+            -   couchdb
         restart: always
         networks:
             - internal
@@ -24,7 +29,7 @@ services:
             COUCHDB_URL: http://couchdb:5984
             COUCHDB_USERNAME: ${COUCHDB_USER}
             COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
-
+            LOG_CHAT: ${LOG_CHAT}
 networks:
     internal:
         driver: bridge

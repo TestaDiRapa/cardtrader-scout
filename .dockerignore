@@ -1,7 +1,6 @@
 # Gradle-related
 .gradle/
 **/build/
-!card-trader-scout/build/dist/wasmJs/productionExecutable
 gradle-app.setting/
 !gradle/wrapper/
 
