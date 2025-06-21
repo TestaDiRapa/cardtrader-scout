@@ -5,22 +5,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.DisplayStyle
-import org.jetbrains.compose.web.css.FlexDirection
-import org.jetbrains.compose.web.css.Position
-import org.jetbrains.compose.web.css.alignItems
 import org.jetbrains.compose.web.css.display
-import org.jetbrains.compose.web.css.flexDirection
-import org.jetbrains.compose.web.css.flexGrow
 import org.jetbrains.compose.web.css.gap
 import org.jetbrains.compose.web.css.gridTemplateColumns
-import org.jetbrains.compose.web.css.height
-import org.jetbrains.compose.web.css.overflowY
-import org.jetbrains.compose.web.css.padding
-import org.jetbrains.compose.web.css.position
 import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.css.vh
 import org.jetbrains.compose.web.dom.Div
 import org.testadirapa.cardtrader.Blueprint
 import org.testadirapa.cardtraderscout.state.AddWatcherStateViewModel
@@ -58,7 +47,7 @@ fun BlueprintSelector(
 			)
 		}
 	}
-	FloatingButton(
+	FloatingMainButton(
 		"Select",
 		selectedIds.isNotEmpty()
 	) {

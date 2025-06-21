@@ -12,7 +12,6 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.takeFrom
-import org.jetbrains.compose.web.attributes.width
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.DisplayStyle
 import org.jetbrains.compose.web.css.FlexDirection
@@ -20,7 +19,6 @@ import org.jetbrains.compose.web.css.alignItems
 import org.jetbrains.compose.web.css.display
 import org.jetbrains.compose.web.css.flexDirection
 import org.jetbrains.compose.web.css.paddingLeft
-import org.jetbrains.compose.web.css.paddingRight
 import org.jetbrains.compose.web.css.paddingTop
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
@@ -32,7 +30,9 @@ import org.testadirapa.cardtraderscout.http.HttpResult
 import org.testadirapa.cardtraderscout.http.HttpUtils.client
 import org.testadirapa.cardtraderscout.http.HttpUtils.wrap
 import org.testadirapa.cardtraderscout.pages.AddWatcherPage
+import org.testadirapa.cardtraderscout.pages.ManageWatchersPage
 import org.testadirapa.cardtraderscout.state.AddWatcherStateViewModel
+import org.testadirapa.cardtraderscout.state.ManageWatchersStateViewModel
 import org.testadirapa.cardtraderscout.theme.ColorTheme.getColorScheme
 import org.testadirapa.cardtraderscout.utils.getBaseUrl
 import org.testadirapa.cardtraderscout.utils.getQueryParams
@@ -75,7 +75,15 @@ fun App() {
 					initData = webApp.initData,
 					hash = webApp.initDataUnsafe.hash
 				)
+			)
+			operation == "manage" && isVerified == true -> ManageWatchersPage(
+				colorScheme = colorScheme,
+				viewModel = ManageWatchersStateViewModel(
+					backendUrl = baseUrl,
+					initData = webApp.initData,
+					hash = webApp.initDataUnsafe.hash
 				)
+			)
 			else -> AlertBlock(
 				backgroundColor = colorScheme.errorBackground,
 				title = "Error",

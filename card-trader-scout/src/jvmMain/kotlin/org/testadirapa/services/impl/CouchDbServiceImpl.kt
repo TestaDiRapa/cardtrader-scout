@@ -5,6 +5,7 @@ import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.expectSuccess
 import io.ktor.client.request.basicAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
@@ -15,6 +16,7 @@ import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.testadirapa.http.HttpConfig
@@ -26,7 +28,9 @@ import org.testadirapa.models.db.PaginatedReducedList
 import org.testadirapa.models.db.StoredDocument
 import org.testadirapa.models.db.Watcher
 import org.testadirapa.dto.NewWatcher
+import org.testadirapa.dto.ExtendedWatcher
 import org.testadirapa.services.CouchDbService
+import org.testadirapa.utils.enhanceWatcher
 import java.util.UUID
 
 class CouchDbServiceImpl private constructor(
@@ -105,7 +109,19 @@ class CouchDbServiceImpl private constructor(
 			}
 			setBody(Keys(keys = listOf(chatId)))
 			expectSuccess = true
-		}.body<PaginatedList<Long, String, Watcher>>().rows.map { it.doc }.toSet()
+		}.body<PaginatedList<Long, JsonElement, Watcher>>().rows.map { it.doc }.toSet()
+
+	override suspend fun getExtendedWatchersByChatId(chatId: Long): List<ExtendedWatcher> {
+		val watchers = getWatchersByChatId(chatId)
+		val blueprintIds = watchers.map { it.blueprintId }.toSet()
+		val blueprintsById = getBlueprints(blueprintIds).associateBy { it.id }
+		return watchers.map {
+			enhanceWatcher(
+				watcher = it,
+				blueprint = blueprintsById.getValue(it.blueprintId)
+			)
+		}.sortedBy { it.blueprint.name }
+	}
 
 	override suspend fun getWatchersByBlueprintId(blueprintId: Long): Set<Watcher> =
 		client.post {
@@ -131,6 +147,9 @@ class CouchDbServiceImpl private constructor(
 	override suspend fun getBlueprint(blueprintId: Long): Blueprint? =
 		get<BlueprintWrapper>(blueprintId.toString())?.blueprint
 
+	private suspend fun getBlueprints(blueprintIds: Collection<Long>): List<Blueprint> =
+		get<BlueprintWrapper>(blueprintIds.map { it.toString() }).map { it.blueprint }
+
 	override suspend fun createOrUpdateWatcher(watcher: Watcher) = save(watcher)
 
 	private suspend inline fun <reified T : StoredDocument> save(entity: T) {
@@ -143,12 +162,32 @@ class CouchDbServiceImpl private constructor(
 		}
 	}
 
+	override suspend fun delete(docId: String, rev: String) {
+		client.delete {
+			url {
+				appendPathSegments(DATABASE_NAME, docId)
+				parameter("rev", rev)
+			}
+			expectSuccess = true
+		}
+	}
+
 	private suspend inline fun <reified T : StoredDocument> get(id: String): T? =
 		client.get {
 			url {
 				appendPathSegments(DATABASE_NAME, id)
 			}
 		}.takeIf { it.status.isSuccess() }?.body<T>()
+
+	private suspend inline fun <reified T : StoredDocument> get(ids: List<String>): List<T> =
+		client.post {
+			url {
+				appendPathSegments(DATABASE_NAME, "_all_docs")
+				parameter("include_docs", true)
+			}
+			setBody(Keys(keys = ids))
+			expectSuccess = true
+		}.body<PaginatedList<Long, JsonElement, T>>().rows.map { it.doc }
 
 	init {
 		runBlocking {

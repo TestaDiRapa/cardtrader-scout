@@ -66,7 +66,7 @@ inline fun <reified T> SetSelectionMenu(
 			)
 		}
 
-		FloatingButton(
+		FloatingMainButton(
 			text = "Select",
 			show = selectedItems.isNotEmpty()
 		) { onChoose(selectedItems) }

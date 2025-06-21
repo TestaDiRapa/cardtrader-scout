@@ -13,12 +13,14 @@ import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.testadirapa.components.AsyncMessageQueue
 import org.testadirapa.telegram.states.BotState
 import org.testadirapa.telegram.states.ErrorState
 import org.testadirapa.telegram.states.addwatcher.AddWatcherState
+import org.testadirapa.telegram.states.removewatcher.ManageWatchersState
 
 class CardTraderScoutBot(
 	private val logChat: ChatId,
@@ -69,6 +71,7 @@ class CardTraderScoutBot(
 	}
 
 	suspend fun start() {
+		@Suppress("RemoveExplicitTypeArguments")
 		telegramBotWithBehaviourAndFSMAndStartLongPolling<BotState>(
 			telegramApiKey,
 			CoroutineScope(Dispatchers.IO),
@@ -79,6 +82,10 @@ class CardTraderScoutBot(
 				when (state) {
 					is AddWatcherState -> {
 						logger.error("Error in AddWatcher state", e)
+						ErrorState(state.context.chatId, e.message ?: e.localizedMessage)
+					}
+					is ManageWatchersState -> {
+						logger.error("Error in ManageWatchers state", e)
 						ErrorState(state.context.chatId, e.message ?: e.localizedMessage)
 					}
 					is ErrorState -> {
@@ -96,10 +103,12 @@ class CardTraderScoutBot(
 			listenForErrors()
 			ErrorState.registerState()
 			AddWatcherState.register(webAppUrl)
+			ManageWatchersState.register(webAppUrl)
 			setMyCommands(
 				listOfNotNull(
 					ErrorState.getDescription(),
-					AddWatcherState.getDescription()
+					AddWatcherState.getDescription(),
+					ManageWatchersState.getDescription(),
 				)
 			)
 		}.second.join()

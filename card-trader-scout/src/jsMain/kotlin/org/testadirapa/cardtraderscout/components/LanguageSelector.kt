@@ -20,12 +20,9 @@ import org.jetbrains.compose.web.css.fontFamily
 import org.jetbrains.compose.web.css.fontSize
 import org.jetbrains.compose.web.css.gap
 import org.jetbrains.compose.web.css.gridTemplateColumns
-import org.jetbrains.compose.web.css.marginBottom
 import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.css.textAlign
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.H3
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 import org.testadirapa.cardtrader.MtgLanguage
@@ -40,13 +37,10 @@ fun LanguageSelector(
 	var selectedIds by remember { mutableStateOf<Set<String>>(emptySet()) }
 	var selectedLanguages by remember { mutableStateOf<Set<MtgLanguage>>(emptySet()) }
 
-	H3({
-		style {
-			textAlign("center")
-			marginBottom(8.px)
-			color(colorScheme.textColor)
-		}
-	}) { Text("Choose the language(s)") }
+	Title(
+		colorScheme = colorScheme,
+		text = "Choose the Language(s)"
+	)
 
 	Div({
 		style {
@@ -93,7 +87,7 @@ fun LanguageSelector(
 		}
 	}
 
-	FloatingButton(
+	FloatingMainButton(
 		text = "Select",
 		show = selectedIds.isNotEmpty()
 	) { onChoose(selectedLanguages) }
@@ -141,4 +135,5 @@ fun MtgLanguage.toSelectorParameters(): Pair<String, String> = when(this) {
 	MtgLanguage.It -> "🇮🇹" to "Italian"
 	MtgLanguage.Jp -> "🇯🇵" to "Japanese"
 	MtgLanguage.Pt -> "🇵🇹" to "Portuguese"
+	MtgLanguage.Cn -> "🇨🇳" to "Chinese"
 }

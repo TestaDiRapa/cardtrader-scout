@@ -23,6 +23,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondOutputStream
 import io.ktor.server.routing.RoutingContext
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
@@ -32,6 +33,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.testadirapa.components.AsyncMessageQueue
 import org.testadirapa.dto.NewWatcher
+import org.testadirapa.dto.WatcherToRemove
 import org.testadirapa.dto.WebAppDataWrapper
 import org.testadirapa.services.CardTraderService
 import org.testadirapa.services.CouchDbService
@@ -135,6 +137,22 @@ class WebviewServer(
 				val chatId = newWatcher.validationData.extractUser().id
 				couchDbService.createWatchers(chatId, newWatcher)
 				AsyncMessageQueue.sendMessage(chatId, "Watcher successfully created")
+				call.respond(HttpStatusCode.NoContent)
+			}
+			post("/watcher/list") {
+				val webAppCheckData = call.receive<WebAppDataWrapper>()
+				val isSafe = urlKeeper.checkWebAppData(webAppCheckData.data, webAppCheckData.hash)
+				guarded(isSafe) { "Invalid interaction" }
+				verifiedHash.put(webAppCheckData.hash, isSafe)
+				val chatId = webAppCheckData.extractUser().id
+				call.respond(couchDbService.getExtendedWatchersByChatId(chatId))
+			}
+			post("/watcher/purge") {
+				val removeData = call.receive<WatcherToRemove>()
+				guarded(
+					urlKeeper.checkWebAppData(removeData.webData.data, removeData.webData.hash)
+				) { "Invalid interaction" }
+				couchDbService.delete(removeData.watcherId, removeData.watcherRev)
 				call.respond(HttpStatusCode.NoContent)
 			}
 		}

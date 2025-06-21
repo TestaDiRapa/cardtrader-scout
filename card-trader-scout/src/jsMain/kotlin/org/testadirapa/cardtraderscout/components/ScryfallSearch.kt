@@ -6,6 +6,7 @@ import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.testadirapa.cardtraderscout.components.styles.textInputStyle
 import org.testadirapa.cardtraderscout.state.AddWatcherStateViewModel
 import org.testadirapa.cardtraderscout.theme.ColorTheme
 
@@ -36,25 +37,10 @@ fun ScryfallSearch(
 				query = it.value.replace(Regex("[\n\t]"), "")
 			}
 			placeholder("Card name or Scryfall query")
-			style {
-				flexGrow(1)
-				fontSize(16.px)
-				lineHeight(48.px)
-				paddingLeft(8.px)
-				color(colorScheme.textColor)
-				backgroundColor(colorScheme.backgroundColor)
-				border {
-					style(LineStyle.Solid)
-					width(1.px)
-					color(colorScheme.borderColor)
-				}
-				borderRadius(6.px)
-				width(100.percent)
-				boxSizing("border-box")
-			}
+			textInputStyle(colorScheme)
 		}
 
-		FloatingButton(
+		FloatingMainButton(
 			text = "Search",
 			show = query.trim().length >= 3
 		) { onSearch() }

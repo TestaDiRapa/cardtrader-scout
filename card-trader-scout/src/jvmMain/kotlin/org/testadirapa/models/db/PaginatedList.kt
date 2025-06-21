@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PaginatedList<K, V, D>(
 	@SerialName("total_rows") val totalRows: Int,
-	val offset: Int,
+	val offset: Int?,
 	val rows: List<Row<K, V, D>>
 )
 

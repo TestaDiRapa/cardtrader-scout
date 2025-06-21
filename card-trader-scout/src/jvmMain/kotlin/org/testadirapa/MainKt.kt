@@ -1,6 +1,5 @@
 package org.testadirapa
 
-import dev.inmo.tgbotapi.types.ChatId
 import dev.inmo.tgbotapi.types.toChatId
 import dev.inmo.tgbotapi.utils.TelegramAPIUrlsKeeper
 import org.testadirapa.components.PriceChecker
