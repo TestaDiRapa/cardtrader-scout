@@ -1,0 +1,1 @@
+GIT_COMMIT=$(git rev-parse --short HEAD) && docker build -t card-trader-scout:$GIT_GIT_COMMIT . && docker compose --env-file ./compose.env up -d
