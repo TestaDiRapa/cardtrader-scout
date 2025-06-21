@@ -9,7 +9,6 @@ import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.CSSColorValue
 import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.DisplayStyle
-import org.jetbrains.compose.web.css.JustifyContent
 import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.css.alignItems
 import org.jetbrains.compose.web.css.backgroundColor
@@ -19,38 +18,39 @@ import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.css.display
 import org.jetbrains.compose.web.css.fontSize
 import org.jetbrains.compose.web.css.fontWeight
-import org.jetbrains.compose.web.css.height
-import org.jetbrains.compose.web.css.justifyContent
 import org.jetbrains.compose.web.css.marginBottom
 import org.jetbrains.compose.web.css.marginLeft
 import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.css.textAlign
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.H3
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 import org.testadirapa.cardtrader.CardCondition
 import org.testadirapa.cardtraderscout.theme.ColorTheme
 import org.testadirapa.cardtraderscout.utils.ALL_INTERNAL_ID
+import org.testadirapa.cardtraderscout.utils.menuOptions
 
 @Composable
 fun ConditionSelector(
 	colorScheme: ColorTheme.ColorSchemeParams,
+	initialValues: Set<CardCondition> = emptySet(),
+	onCancel: (() -> Unit)? = null,
 	onChoose: (Set<CardCondition>) -> Unit,
 ) {
-	var selectedItemIds by remember { mutableStateOf<Set<String>>(emptySet()) }
-	var selectedItems by remember { mutableStateOf<Set<CardCondition>>(emptySet()) }
+	var selectedItemIds by remember {
+		mutableStateOf(
+			if (initialValues == CardCondition.entries.toSet()) setOf(ALL_INTERNAL_ID)
+			else initialValues.map { it.name }.toSet()
+		)
+	}
+	var selectedItems by remember { mutableStateOf(initialValues) }
 
-	H3({
-		style {
-			textAlign("center")
-			marginBottom(8.px)
-			color(colorScheme.textColor)
-		}
-	}) { Text("Choose the condition(s)") }
+	Title(
+		colorScheme = colorScheme,
+		text = "Choose the Condition(s)"
+	)
 
 	ConditionRow(
 		colorScheme = colorScheme,
@@ -102,10 +102,26 @@ fun ConditionSelector(
 			}
 		)
 	}
-	FloatingButton(
+	if (onCancel != null) {
+		FloatingSecondaryButton(
+			text = "Cancel",
+			show = true,
+			color = colorScheme.secondaryButtonColor,
+			textColor = Color("#FFFFFF"),
+			onClick = onCancel
+		)
+	}
+	FloatingMainButton(
 		text = "Select",
 		show = selectedItems.isNotEmpty()
-	) { onChoose(selectedItems) }
+	) {
+		val items = selectedItems
+		if (items.isNotEmpty()) {
+			selectedItems = emptySet()
+			selectedItemIds = emptySet()
+			onChoose(items)
+		}
+	}
 }
 
 @Composable
@@ -147,33 +163,3 @@ private fun ConditionRow(
 		}
 	}
 }
-
-@Composable
-private fun ConditionTag(text: String, color: CSSColorValue) {
-	Div({
-		style {
-			width(32.px)
-			height(32.px)
-			display(DisplayStyle.Flex)
-			alignItems(AlignItems.Center)
-			justifyContent(JustifyContent.Center)
-			backgroundColor(color)
-			color(Color.white)
-			fontSize(14.px)
-			borderRadius(4.px)
-		}
-	}) {
-		Text(text)
-	}
-}
-
-private fun CardCondition.menuOptions(): Triple<String, CSSColorValue, String> = when (this) {
-	CardCondition.Mint -> Triple("Mint", Color("#7BB125"), "MI")
-	CardCondition.NearMint -> Triple("Near Mint", Color("#7BB125"), "NM")
-	CardCondition.SlightlyPlayed -> Triple("Slightly Played", Color("#A5B200"), "SP")
-	CardCondition.ModeratelyPlayed -> Triple("Moderately Played", Color("#E39101"), "MP")
-	CardCondition.Played -> Triple("Played", Color("#FD8428"), "PL")
-	CardCondition.HeavilyPlayed -> Triple("Heavily Played", Color("#9C3333"), "HP")
-	CardCondition.Poor -> Triple("Poor", Color("#9C3333"), "PO")
-}
-

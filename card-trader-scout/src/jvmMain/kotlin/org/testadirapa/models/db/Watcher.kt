@@ -17,7 +17,7 @@ data class Watcher(
 	val priceThreshold: Int,
 	val cardTraderZeroOnly: Boolean,
 	val triggered: Boolean
-) : StoredDocument{
+) : StoredDocument {
 
 	override val descriptor = "Watcher"
 

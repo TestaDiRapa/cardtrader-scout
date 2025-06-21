@@ -20,12 +20,9 @@ import org.jetbrains.compose.web.css.fontFamily
 import org.jetbrains.compose.web.css.fontSize
 import org.jetbrains.compose.web.css.gap
 import org.jetbrains.compose.web.css.gridTemplateColumns
-import org.jetbrains.compose.web.css.marginBottom
 import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.css.textAlign
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.H3
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 import org.testadirapa.cardtrader.MtgLanguage
@@ -35,18 +32,23 @@ import org.testadirapa.cardtraderscout.utils.ALL_INTERNAL_ID
 @Composable
 fun LanguageSelector(
 	colorScheme: ColorTheme.ColorSchemeParams,
+	initialValues: Set<MtgLanguage> = emptySet(),
+	onCancel: (() -> Unit)? = null,
 	onChoose: (Set<MtgLanguage>) -> Unit,
 ) {
-	var selectedIds by remember { mutableStateOf<Set<String>>(emptySet()) }
-	var selectedLanguages by remember { mutableStateOf<Set<MtgLanguage>>(emptySet()) }
+	var selectedIds by remember {
+		mutableStateOf(
+			if (initialValues == MtgLanguage.entries.toSet())
+				setOf(ALL_INTERNAL_ID)
+			else initialValues.map { it.name }.toSet()
+		)
+	}
+	var selectedLanguages by remember { mutableStateOf(initialValues) }
 
-	H3({
-		style {
-			textAlign("center")
-			marginBottom(8.px)
-			color(colorScheme.textColor)
-		}
-	}) { Text("Choose the language(s)") }
+	Title(
+		colorScheme = colorScheme,
+		text = "Choose the Language(s)"
+	)
 
 	Div({
 		style {
@@ -92,11 +94,27 @@ fun LanguageSelector(
 			)
 		}
 	}
-
-	FloatingButton(
+	if (onCancel != null) {
+		FloatingSecondaryButton(
+			text = "Cancel",
+			show = true,
+			color = colorScheme.secondaryButtonColor,
+			textColor = Color("#FFFFFF"),
+			onClick = onCancel
+		)
+	}
+	FloatingMainButton(
 		text = "Select",
-		show = selectedIds.isNotEmpty()
-	) { onChoose(selectedLanguages) }
+		show = selectedLanguages.isNotEmpty()
+	) {
+		val languages = selectedLanguages
+		if (languages.isNotEmpty()) {
+			selectedLanguages = emptySet()
+			selectedIds = emptySet()
+			onChoose(languages)
+		}
+
+	}
 }
 
 @Composable
@@ -141,4 +159,5 @@ fun MtgLanguage.toSelectorParameters(): Pair<String, String> = when(this) {
 	MtgLanguage.It -> "🇮🇹" to "Italian"
 	MtgLanguage.Jp -> "🇯🇵" to "Japanese"
 	MtgLanguage.Pt -> "🇵🇹" to "Portuguese"
+	MtgLanguage.Cn -> "🇨🇳" to "Chinese"
 }

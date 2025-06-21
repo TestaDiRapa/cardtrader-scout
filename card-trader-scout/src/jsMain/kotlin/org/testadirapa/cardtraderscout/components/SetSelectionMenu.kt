@@ -1,14 +1,13 @@
 package org.testadirapa.cardtraderscout.components
-
 import androidx.compose.runtime.*
-import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.testadirapa.cardtraderscout.theme.ColorTheme
+import org.testadirapa.cardtraderscout.utils.ALL_INTERNAL_ID
 import org.testadirapa.cardtraderscout.utils.getImageUrl
 
 @Composable
-inline fun <reified T> CardSelectionMenu(
+inline fun <reified T> SetSelectionMenu(
 	baseUrl: String,
 	token: String,
 	items: Map<String, List<T>>,
@@ -16,7 +15,7 @@ inline fun <reified T> CardSelectionMenu(
 	crossinline labelSelector: (String, List<T>) -> String,
 	crossinline onChoose: (Set<String>) -> Unit
 ) {
-	var selectedItemId by remember { mutableStateOf("") }
+	var selectedItemIds by remember { mutableStateOf<Set<String>>(emptySet()) }
 	var selectedItems by remember { mutableStateOf<Set<String>>(emptySet()) }
 
 	Div({
@@ -27,20 +26,42 @@ inline fun <reified T> CardSelectionMenu(
 			alignItems(AlignItems.Center)
 		}
 	}) {
+		SetRow(
+			label = "Select all",
+			selected = selectedItemIds == setOf(ALL_INTERNAL_ID),
+			colorScheme = colorScheme,
+			onClick = {
+				selectedItemIds = setOf(ALL_INTERNAL_ID)
+				selectedItems = items.keys
+			},
+			images = emptyList()
+		)
 
 		items.forEach { (selector, cards) ->
-			val isSelected = selector == selectedItemId
+			val isSelected = selector in selectedItemIds
 			val cardUrls = cards.mapNotNull { it.getImageUrl(baseUrl, token) }
 
-			CardRow(
+			SetRow(
 				label = labelSelector(selector, cards),
 				selected = isSelected,
 				images = cardUrls.take(2),
 				showMore = cardUrls.size >= 3,
 				colorScheme = colorScheme,
 				onClick = {
-					selectedItemId = selector
-					selectedItems = setOf(selector)
+					when {
+						selectedItemIds == setOf(ALL_INTERNAL_ID) -> {
+							selectedItemIds = setOf(selector)
+							selectedItems = setOf(selector)
+						}
+						selector in selectedItemIds -> {
+							selectedItemIds = selectedItemIds - selector
+							selectedItems = selectedItems - selector
+						}
+						else -> {
+							selectedItemIds = selectedItemIds + selector
+							selectedItems = selectedItems + selector
+						}
+					}
 				}
 			)
 		}
@@ -53,7 +74,7 @@ inline fun <reified T> CardSelectionMenu(
 }
 
 @Composable
-fun CardRow(
+fun SetRow(
 	label: String,
 	selected: Boolean,
 	images: List<String>,
@@ -90,10 +111,6 @@ fun CardRow(
 				flexGrow(1)
 			}
 		}) {
-			Input(type = InputType.Radio) {
-				checked(selected)
-				onClick { onClick() }
-			}
 			Span({
 				style {
 					marginLeft(8.px)

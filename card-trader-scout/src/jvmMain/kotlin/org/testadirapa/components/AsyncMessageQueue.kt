@@ -4,7 +4,6 @@ import dev.inmo.tgbotapi.types.ChatId
 import dev.inmo.tgbotapi.types.toChatId
 import kotlinx.coroutines.channels.Channel
 import org.slf4j.LoggerFactory
-import kotlin.math.log
 
 object AsyncMessageQueue {
 

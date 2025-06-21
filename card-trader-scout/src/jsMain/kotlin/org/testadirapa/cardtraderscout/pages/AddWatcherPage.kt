@@ -8,7 +8,7 @@ import org.testadirapa.cardtraderscout.components.AlertBlock
 import org.testadirapa.cardtraderscout.components.BlueprintSelector
 import org.testadirapa.cardtraderscout.components.CardSelection
 import org.testadirapa.cardtraderscout.components.ConditionSelector
-import org.testadirapa.cardtraderscout.components.FloatingButton
+import org.testadirapa.cardtraderscout.components.FloatingMainButton
 import org.testadirapa.cardtraderscout.components.LanguageSelector
 import org.testadirapa.cardtraderscout.components.ScryfallSearch
 import org.testadirapa.cardtraderscout.components.SetSelection
@@ -24,7 +24,6 @@ fun AddWatcherPage(
 	viewModel: AddWatcherStateViewModel
 ) {
 	val coroutineScope = rememberCoroutineScope()
-
 	val state = viewModel.state
 
 	if (state is AddWatcherState.InitialState) {
@@ -130,7 +129,7 @@ fun AddWatcherPage(
 			text = "Creation successful, you will be notified when a listing matching your preferences will be published",
 			textColor = Color("#2E7D32"),
 		)
-		FloatingButton(
+		FloatingMainButton(
 			"Close",
 			true
 		) { webApp.close() }
