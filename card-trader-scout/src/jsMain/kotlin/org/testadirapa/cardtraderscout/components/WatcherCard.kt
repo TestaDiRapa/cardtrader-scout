@@ -109,7 +109,7 @@ fun WatcherCard(
 					marginBottom(4.px)
 				}
 			}) {
-				Text("${watcher.blueprint.name} - ${watcher.rev}")
+				Text(watcher.blueprint.name)
 			}
 			Div({
 				style {

@@ -10,10 +10,7 @@ services:
             - ./couchdb/data/:/opt/couchdb/data
 
     card-trader-scout:
-        build:
-            context: .
-            tags:
-                -   "card-trader-scout:${GIT_COMMIT}"
+        image: card-trader-scout:${GIT_COMMIT}
         depends_on:
             -   couchdb
         restart: always

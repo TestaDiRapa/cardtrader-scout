@@ -10,7 +10,3 @@
 - Select your price threshold.
 - Only get notified if the card is available with [CardTraderZero](https://www.cardtrader.com/pages/zero).
 - Create multiple watchers for the same card.
-
-## Warning 
-This bot is still in a development stage and it is missing some features:
-- A command to edit/delete your watchers.
