@@ -8,12 +8,13 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.testadirapa.cardtrader.Blueprint
-import org.testadirapa.cardtrader.MtgLanguage
 import org.testadirapa.cardtrader.Product
 import org.testadirapa.cardtrader.toEmoji
 import org.testadirapa.models.db.Watcher
 import org.testadirapa.services.CardTraderService
 import org.testadirapa.services.CouchDbService
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class PriceChecker private constructor(
 	private val cardTraderService: CardTraderService,
@@ -30,7 +31,7 @@ class PriceChecker private constructor(
 			return instance
 		}
 	}
-
+	private val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
 	private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 	private val logger = LoggerFactory.getLogger(PriceChecker::class.java)
 
@@ -38,6 +39,7 @@ class PriceChecker private constructor(
 		while (isActive) {
 			doInfinity("0 0 * * * *") {
 				try {
+					logger.info("Starting check @ ${LocalDateTime.now().format(formatter)}")
 					checkProducts()
 				} catch (e: Exception) {
 					logger.error("Error while checking products", e)

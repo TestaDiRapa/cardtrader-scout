@@ -17,6 +17,9 @@ object ColorTheme {
 		val warningText: CSSColorValue,
 		val selectedBackground: CSSColorValue,
 		val unSelectedBackground: CSSColorValue,
+		val redButtonColor: CSSColorValue,
+		val mainButtonColor: CSSColorValue,
+		val secondaryButtonColor: CSSColorValue,
 	)
 
 	fun getColorScheme(webApp: WebApp): ColorSchemeParams = when (webApp.colorScheme) {
@@ -29,6 +32,9 @@ object ColorTheme {
 			warningText = Color("#856404"),
 			selectedBackground = Color("#B2DFDB"),
 			unSelectedBackground = Color("#F1F3F4"),
+			redButtonColor = Color("#FF4B4B"),
+			mainButtonColor = Color(webApp.themeParams.buttonColor ?: "#FF9B9B"),
+			secondaryButtonColor = Color("#5C5C5E")
 		)
 		ColorScheme.DARK -> ColorSchemeParams(
 			errorBackground = Color("#6B2424"),
@@ -39,6 +45,9 @@ object ColorTheme {
 			warningText = Color("#856404"),
 			selectedBackground = Color("#2D9CDB"),
 			unSelectedBackground = Color("#2A2E35"),
+			redButtonColor = Color("#FF4B4B"),
+			mainButtonColor = Color(webApp.themeParams.buttonColor ?: "#FF9B9B"),
+			secondaryButtonColor = Color("#5C5C5E")
 		)
 	}
 }

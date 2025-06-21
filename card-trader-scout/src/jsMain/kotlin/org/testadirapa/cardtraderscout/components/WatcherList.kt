@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.css.AlignItems
+import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.DisplayStyle
 import org.jetbrains.compose.web.css.FlexDirection
 import org.jetbrains.compose.web.css.alignItems
@@ -69,12 +70,27 @@ fun WatcherList(
 			)
 		}
 	}
-	FloatingMainButton(
-		text = "Delete watcher",
+	FloatingSecondaryButton(
+		text = "Delete",
 		show = selectedItem != null,
-		color = "#6B2424"
+		color = colorScheme.redButtonColor,
+		textColor = Color("#FFFFFF")
 	) {
-		print("ok")
+		val itemId = selectedItem
+		if (itemId != null) {
+			selectedItem = null
+			viewModel.chooseWatcherToDelete(watchers.first { it.id == itemId })
+		}
+	}
+	FloatingMainButton(
+		text = "Edit",
+		show = selectedItem != null,
+	) {
+		val itemId = selectedItem
+		if (itemId != null) {
+			selectedItem = null
+			viewModel.startEdit(watchers.first { it.id == itemId })
+		}
 	}
 }
 

@@ -32,10 +32,18 @@ import org.testadirapa.cardtraderscout.utils.ALL_INTERNAL_ID
 @Composable
 fun LanguageSelector(
 	colorScheme: ColorTheme.ColorSchemeParams,
+	initialValues: Set<MtgLanguage> = emptySet(),
+	onCancel: (() -> Unit)? = null,
 	onChoose: (Set<MtgLanguage>) -> Unit,
 ) {
-	var selectedIds by remember { mutableStateOf<Set<String>>(emptySet()) }
-	var selectedLanguages by remember { mutableStateOf<Set<MtgLanguage>>(emptySet()) }
+	var selectedIds by remember {
+		mutableStateOf(
+			if (initialValues == MtgLanguage.entries.toSet())
+				setOf(ALL_INTERNAL_ID)
+			else initialValues.map { it.name }.toSet()
+		)
+	}
+	var selectedLanguages by remember { mutableStateOf(initialValues) }
 
 	Title(
 		colorScheme = colorScheme,
@@ -86,11 +94,27 @@ fun LanguageSelector(
 			)
 		}
 	}
-
+	if (onCancel != null) {
+		FloatingSecondaryButton(
+			text = "Cancel",
+			show = true,
+			color = colorScheme.secondaryButtonColor,
+			textColor = Color("#FFFFFF"),
+			onClick = onCancel
+		)
+	}
 	FloatingMainButton(
 		text = "Select",
-		show = selectedIds.isNotEmpty()
-	) { onChoose(selectedLanguages) }
+		show = selectedLanguages.isNotEmpty()
+	) {
+		val languages = selectedLanguages
+		if (languages.isNotEmpty()) {
+			selectedLanguages = emptySet()
+			selectedIds = emptySet()
+			onChoose(languages)
+		}
+
+	}
 }
 
 @Composable

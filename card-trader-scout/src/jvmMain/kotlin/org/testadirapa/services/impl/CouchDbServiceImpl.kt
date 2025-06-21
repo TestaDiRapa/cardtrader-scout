@@ -21,6 +21,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.testadirapa.http.HttpConfig
 import org.testadirapa.cardtrader.Blueprint
+import org.testadirapa.cardtrader.exception.NotFoundException
 import org.testadirapa.models.db.BlueprintWrapper
 import org.testadirapa.models.db.Keys
 import org.testadirapa.models.db.PaginatedList
@@ -29,6 +30,7 @@ import org.testadirapa.models.db.StoredDocument
 import org.testadirapa.models.db.Watcher
 import org.testadirapa.dto.NewWatcher
 import org.testadirapa.dto.ExtendedWatcher
+import org.testadirapa.dto.WatcherToModify
 import org.testadirapa.services.CouchDbService
 import org.testadirapa.utils.enhanceWatcher
 import java.util.UUID
@@ -99,6 +101,23 @@ class CouchDbServiceImpl private constructor(
 				save(currentBlueprint.copy(blueprint = blueprint))
 			}
 		}
+	}
+
+	override suspend fun modifyWatcher(watcherToModify: WatcherToModify) {
+		val currentWatcher = get<Watcher>(watcherToModify.watcherId)
+			?: throw NotFoundException("Watcher ${watcherToModify.watcherId} not found")
+		require(currentWatcher.rev == watcherToModify.watcherRev) {
+			"Mismatching rev"
+		}
+		save(
+			currentWatcher.copy(
+				conditions = watcherToModify.conditions,
+				languages = watcherToModify.languages,
+				priceThreshold = (watcherToModify.priceThreshold * 100).toInt(),
+				cardTraderZeroOnly = watcherToModify.cardTraderZeroOnly,
+				triggered = false
+			)
+		)
 	}
 
 	override suspend fun getWatchersByChatId(chatId: Long): Set<Watcher> =

@@ -109,7 +109,7 @@ fun WatcherCard(
 					marginBottom(4.px)
 				}
 			}) {
-				Text(watcher.blueprint.name)
+				Text("${watcher.blueprint.name} - ${watcher.rev}")
 			}
 			Div({
 				style {
@@ -149,7 +149,16 @@ fun WatcherCard(
 					marginTop(4.px)
 				}
 			}) {
-				Text("Target price: ${watcher.priceThreshold / 100.0}€${if (watcher.cardTraderZeroOnly) ", CardTraderZero only" else ""}")
+				Text("Target price: ${watcher.priceThreshold / 100.0}")
+			}
+			if (watcher.cardTraderZeroOnly) {
+				Span({
+					style {
+						marginTop(4.px)
+					}
+				}) {
+					Text("CardTraderZero only")
+				}
 			}
 			if (watcher.triggered) {
 				Span({

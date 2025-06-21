@@ -23,9 +23,9 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondOutputStream
 import io.ktor.server.routing.RoutingContext
-import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.serialization.SerialName
@@ -33,6 +33,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.testadirapa.components.AsyncMessageQueue
 import org.testadirapa.dto.NewWatcher
+import org.testadirapa.dto.WatcherToModify
 import org.testadirapa.dto.WatcherToRemove
 import org.testadirapa.dto.WebAppDataWrapper
 import org.testadirapa.services.CardTraderService
@@ -130,13 +131,18 @@ class WebviewServer(
 				val newWatcher = call.receive<NewWatcher>()
 				guarded(
 					urlKeeper.checkWebAppData(newWatcher.validationData.data, newWatcher.validationData.hash)
-				) {
-					"Invalid interaction"
-				}
+				) { "Invalid interaction" }
 				verifiedHash.invalidate(newWatcher.validationData.hash)
 				val chatId = newWatcher.validationData.extractUser().id
 				couchDbService.createWatchers(chatId, newWatcher)
-				AsyncMessageQueue.sendMessage(chatId, "Watcher successfully created")
+				call.respond(HttpStatusCode.NoContent)
+			}
+			put("/watcher") {
+				val watcherToModify = call.receive<WatcherToModify>()
+				guarded(
+					urlKeeper.checkWebAppData(watcherToModify.validationData.data, watcherToModify.validationData.hash)
+				) { "Invalid interaction" }
+				couchDbService.modifyWatcher(watcherToModify)
 				call.respond(HttpStatusCode.NoContent)
 			}
 			post("/watcher/list") {

@@ -35,10 +35,17 @@ import org.testadirapa.cardtraderscout.utils.menuOptions
 @Composable
 fun ConditionSelector(
 	colorScheme: ColorTheme.ColorSchemeParams,
+	initialValues: Set<CardCondition> = emptySet(),
+	onCancel: (() -> Unit)? = null,
 	onChoose: (Set<CardCondition>) -> Unit,
 ) {
-	var selectedItemIds by remember { mutableStateOf<Set<String>>(emptySet()) }
-	var selectedItems by remember { mutableStateOf<Set<CardCondition>>(emptySet()) }
+	var selectedItemIds by remember {
+		mutableStateOf(
+			if (initialValues == CardCondition.entries.toSet()) setOf(ALL_INTERNAL_ID)
+			else initialValues.map { it.name }.toSet()
+		)
+	}
+	var selectedItems by remember { mutableStateOf(initialValues) }
 
 	Title(
 		colorScheme = colorScheme,
@@ -95,10 +102,26 @@ fun ConditionSelector(
 			}
 		)
 	}
+	if (onCancel != null) {
+		FloatingSecondaryButton(
+			text = "Cancel",
+			show = true,
+			color = colorScheme.secondaryButtonColor,
+			textColor = Color("#FFFFFF"),
+			onClick = onCancel
+		)
+	}
 	FloatingMainButton(
 		text = "Select",
 		show = selectedItems.isNotEmpty()
-	) { onChoose(selectedItems) }
+	) {
+		val items = selectedItems
+		if (items.isNotEmpty()) {
+			selectedItems = emptySet()
+			selectedItemIds = emptySet()
+			onChoose(items)
+		}
+	}
 }
 
 @Composable

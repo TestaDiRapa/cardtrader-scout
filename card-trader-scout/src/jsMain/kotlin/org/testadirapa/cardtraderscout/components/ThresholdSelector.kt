@@ -32,10 +32,13 @@ import org.testadirapa.cardtraderscout.theme.ColorTheme
 @Composable
 fun ThresholdSelector(
 	colorScheme: ColorTheme.ColorSchemeParams,
+	initialAmount: String = "",
+	initialFastShipping: Boolean = false,
+	onCancel: (() -> Unit)? = null,
 	onClick: (Double, Boolean) -> Unit,
 ) {
-	var amount by remember { mutableStateOf("") }
-	var fastShipping by remember { mutableStateOf(false) }
+	var amount by remember { mutableStateOf(initialAmount) }
+	var fastShipping by remember { mutableStateOf(initialFastShipping) }
 
 	Title(
 		colorScheme = colorScheme,
@@ -85,9 +88,23 @@ fun ThresholdSelector(
 		}
 		Text("CardTraderZero only")
 	}
-
+	if (onCancel != null) {
+		FloatingSecondaryButton(
+			text = "Cancel",
+			show = true,
+			color = colorScheme.secondaryButtonColor,
+			textColor = Color("#FFFFFF"),
+			onClick = onCancel
+		)
+	}
 	FloatingMainButton(
 		text = "Confirm",
 		show = amount.toDoubleOrNull()?.let { it > 0.0 } ?: false
-	) { onClick(amount.toDouble(), fastShipping) }
+	) {
+		val price = amount.toDoubleOrNull()
+		if (price != null) {
+			amount = ""
+			onClick(price, fastShipping)
+		}
+	}
 }
