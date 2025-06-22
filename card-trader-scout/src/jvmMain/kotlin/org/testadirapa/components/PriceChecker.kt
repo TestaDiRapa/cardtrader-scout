@@ -17,6 +17,7 @@ import org.testadirapa.services.CouchDbService
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 class PriceChecker private constructor(
 	private val cardTraderService: CardTraderService,
@@ -56,7 +57,7 @@ class PriceChecker private constructor(
 		if (blueprintIds.size >= 1800) {
 			AsyncMessageQueue.sendError(Exception("There are a lot of blueprints ${blueprintIds.size}."))
 		}
-		val requestsDelay = (59.minutes.inWholeMilliseconds / blueprintIds.size).coerceAtLeast(2)
+		val requestsDelay = (59.minutes.inWholeSeconds / blueprintIds.size).coerceAtLeast(2)
 		blueprintIds.forEach {
 			val wait = try {
 				checkProduct(it)
@@ -66,7 +67,7 @@ class PriceChecker private constructor(
 				true
 			}
 			if (wait) {
-				delay(requestsDelay)
+				delay(requestsDelay.seconds)
 			}
 		}
 	}
