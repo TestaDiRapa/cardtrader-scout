@@ -6,6 +6,8 @@ services:
             COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
         networks:
             - internal
+        ports:
+            - "5984:5984"
         volumes:
             - ./couchdb/data/:/opt/couchdb/data
 
@@ -17,7 +19,7 @@ services:
         networks:
             - internal
         ports:
-            - 8081:8081
+            - "8081:8081"
         environment:
             WEBAPP_FOLDER: /app/webapp
             WEBAPP_URL: ${WEBAPP_URL}
