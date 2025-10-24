@@ -13,7 +13,6 @@ import dev.inmo.tgbotapi.utils.row
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.testadirapa.components.AsyncMessageQueue
@@ -65,7 +64,7 @@ class CardTraderScoutBot(
 		AsyncMessageQueue.onNewException { e ->
 			sendMessage(
 				chatId = logChat,
-				text = e.stackTraceToString()
+				text = e.stackTraceToString().substring(0, 4095)
 			)
 		}
 	}
