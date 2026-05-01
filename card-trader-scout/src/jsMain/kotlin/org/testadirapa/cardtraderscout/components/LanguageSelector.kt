@@ -162,4 +162,5 @@ fun MtgLanguage.toSelectorParameters(): Pair<String, String> = when(this) {
 	MtgLanguage.Cn -> "🇨🇳" to "Chinese"
 	MtgLanguage.Tw -> "🇹🇼" to "Chinese"
 	MtgLanguage.Ru -> "🇷🇺" to "Russian"
+	MtgLanguage.Kr -> "🇰🇷" to "Korean"
 }
