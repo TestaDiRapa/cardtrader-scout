@@ -14,6 +14,7 @@ enum class MtgLanguage {
 	@SerialName("pt") Pt,
 	@SerialName("zh-CN") Cn,
 	@SerialName("zh-TW") Tw,
+	@SerialName("ru") Ru,
 }
 
 fun MtgLanguage.toEmoji(): String = when (this) {
@@ -26,4 +27,5 @@ fun MtgLanguage.toEmoji(): String = when (this) {
 	MtgLanguage.Pt -> "🇵🇹"
 	MtgLanguage.Cn -> "🇨🇳"
 	MtgLanguage.Tw -> "🇹🇼"
+	MtgLanguage.Ru -> "🇷🇺"
 }
