@@ -63,6 +63,7 @@ kotlin {
                 implementation(libs.caffeine)
                 implementation(libs.krontab)
                 implementation(libs.logback)
+                implementation(project.dependencies.platform(libs.netty.bom))
             }
         }
 

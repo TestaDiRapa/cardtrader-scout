@@ -11,6 +11,7 @@ icons = "1.7.3"
 coil = "3.2.0"
 shadow = "8.1.1"
 logback = "1.4.14"
+netty = "4.1.137.Final"
 
 [libraries]
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx" }
@@ -32,6 +33,7 @@ coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.re
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx" }
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+netty-bom = { module = "io.netty:netty-bom", version.ref = "netty" }
 
 [bundles]
 coil = [
