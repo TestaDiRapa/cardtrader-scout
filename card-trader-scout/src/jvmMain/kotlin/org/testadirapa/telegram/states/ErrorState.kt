@@ -8,8 +8,8 @@ import dev.inmo.tgbotapi.types.IdChatIdentifier
 data class ErrorState(override val context: IdChatIdentifier, val message: String) : BotState {
 
 	companion object : BotCommandRegistrar {
-		context(DefaultBehaviourContextWithFSM<BotState>)
-		override suspend fun registerState() {
+		context(ctx: DefaultBehaviourContextWithFSM<BotState>)
+		override suspend fun registerState(): Unit = with(ctx) {
 			strictlyOn<ErrorState> {
 				send(it.context) { +"Error ${it.message}" }
 				null

@@ -1,17 +1,17 @@
 [versions]
-androidx = "2.9.0"
-caffeine = "3.1.8"
-kotlinx = "1.8.1"
-kotlin = "2.1.21"
-ktor = "3.1.2"
-telegram = "24.0.2"
-krontab = "2.7.2"
-compose = "1.8.1"
+androidx = "2.11.0"
+caffeine = "3.3.1"
+kotlinx = "1.11.0"
+kotlin = "2.4.21"
+ktor = "3.6.2"
+telegram = "37.1.0"
+krontab = "3.1.0"
+compose = "1.12.2"
 icons = "1.7.3"
-coil = "3.2.0"
-shadow = "8.1.1"
-logback = "1.4.14"
-netty = "4.1.137.Final"
+coil = "3.6.3"
+shadow = "9.6.1"
+logback = "1.6.8"
+netty = "4.2.21.Final"
 
 [libraries]
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx" }
@@ -59,4 +59,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

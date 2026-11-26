@@ -5,7 +5,7 @@ import dev.inmo.tgbotapi.types.BotCommand
 
 interface BotCommandRegistrar {
 
-	context(DefaultBehaviourContextWithFSM<BotState>)
+	context(ctx: DefaultBehaviourContextWithFSM<BotState>)
 	suspend fun registerState()
 
 	fun getDescription(): BotCommand?

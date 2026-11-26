@@ -32,8 +32,8 @@ data class AddWatcherState(
 			registerState()
 		}
 
-		context(DefaultBehaviourContextWithFSM<BotState>)
-		override suspend fun registerState() {
+		context(ctx: DefaultBehaviourContextWithFSM<BotState>)
+		override suspend fun registerState(): Unit = with(ctx) {
 			strictlyOn<AddWatcherState> {
 				send(
 					chatId = it.context.chatId,

@@ -12,8 +12,8 @@ abstract class StatefulBotCommand<T : BehaviourContext> {
 
 	protected abstract suspend fun T.registerStates()
 
-	context(T)
-	suspend fun register(webAppUrl: String) {
+	context(ctx: T)
+	suspend fun register(webAppUrl: String): Unit = with(ctx) {
 		command(command) { initializer(it, webAppUrl) }
 		registerStates()
 	}
