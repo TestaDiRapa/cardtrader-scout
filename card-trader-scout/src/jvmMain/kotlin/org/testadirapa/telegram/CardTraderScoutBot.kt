@@ -16,6 +16,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import org.testadirapa.components.AsyncMessageQueue
+import org.testadirapa.models.exceptions.DispatchableException
+import org.testadirapa.models.exceptions.UnexpectedBodyException
 import org.testadirapa.telegram.states.BotState
 import org.testadirapa.telegram.states.ErrorState
 import org.testadirapa.telegram.states.addwatcher.AddWatcherState
@@ -62,6 +64,12 @@ class CardTraderScoutBot(
 
 	fun BehaviourContext.listenForErrors() = botScope.launch {
 		AsyncMessageQueue.onNewException { e ->
+			if (e is DispatchableException) {
+				sendMessage(
+					chatId = logChat,
+					text = e.messageToDispatch.substring(0, 4095)
+				)
+			}
 			sendMessage(
 				chatId = logChat,
 				text = e.stackTraceToString().substring(0, 4095)

@@ -1,6 +1,5 @@
 package org.testadirapa.services.impl
 
-import io.ktor.client.call.body
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -9,6 +8,7 @@ import org.testadirapa.http.HttpConfig
 import org.testadirapa.scryfall.PaginatedList
 import org.testadirapa.scryfall.ScryfallCard
 import org.testadirapa.services.ScryfallService
+import org.testadirapa.utils.bodyOrThrow
 
 class ScryfallServiceImpl private constructor(): ScryfallService {
 
@@ -39,7 +39,7 @@ class ScryfallServiceImpl private constructor(): ScryfallService {
 				appendPathSegments("cards", "search")
 				parameter("q", query)
 			}
-		}.body()
+		}.bodyOrThrow()
 	}
 
 }

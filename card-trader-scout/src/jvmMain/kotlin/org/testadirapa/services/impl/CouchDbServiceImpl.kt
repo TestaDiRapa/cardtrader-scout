@@ -1,6 +1,5 @@
 package org.testadirapa.services.impl
 
-import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.expectSuccess
@@ -34,6 +33,7 @@ import org.testadirapa.dto.WatcherToModify
 import org.testadirapa.services.CouchDbService
 import org.testadirapa.utils.enhanceWatcher
 import java.util.UUID
+import org.testadirapa.utils.bodyOrThrow
 
 class CouchDbServiceImpl private constructor(
 	couchDbUrl: String,
@@ -128,7 +128,7 @@ class CouchDbServiceImpl private constructor(
 			}
 			setBody(Keys(keys = listOf(chatId)))
 			expectSuccess = true
-		}.body<PaginatedList<Long, JsonElement, Watcher>>().rows.map { it.doc }.toSet()
+		}.bodyOrThrow<PaginatedList<Long, JsonElement, Watcher>>().rows.map { it.doc }.toSet()
 
 	override suspend fun getExtendedWatchersByChatId(chatId: Long): List<ExtendedWatcher> {
 		val watchers = getWatchersByChatId(chatId)
@@ -151,7 +151,7 @@ class CouchDbServiceImpl private constructor(
 			}
 			setBody(Keys(keys = listOf(blueprintId)))
 			expectSuccess = true
-		}.body<PaginatedList<Long, String, Watcher>>().rows.map { it.doc }.toSet()
+		}.bodyOrThrow<PaginatedList<Long, String, Watcher>>().rows.map { it.doc }.toSet()
 
 	override suspend fun getBlueprintIdsForAllWatchers(): Set<Long> =
 		client.get {
@@ -161,7 +161,7 @@ class CouchDbServiceImpl private constructor(
 				parameter("group_level", 1)
 			}
 			expectSuccess = true
-		}.body<PaginatedReducedList<Long, Int>>().rows.map { it.key }.toSet()
+		}.bodyOrThrow<PaginatedReducedList<Long, Int>>().rows.map { it.key }.toSet()
 
 	override suspend fun getBlueprint(blueprintId: Long): Blueprint? =
 		get<BlueprintWrapper>(blueprintId.toString())?.blueprint
@@ -196,7 +196,7 @@ class CouchDbServiceImpl private constructor(
 			url {
 				appendPathSegments(DATABASE_NAME, id)
 			}
-		}.takeIf { it.status.isSuccess() }?.body<T>()
+		}.takeIf { it.status.isSuccess() }?.bodyOrThrow<T>()
 
 	private suspend inline fun <reified T : StoredDocument> get(ids: List<String>): List<T> =
 		client.post {
@@ -206,7 +206,7 @@ class CouchDbServiceImpl private constructor(
 			}
 			setBody(Keys(keys = ids))
 			expectSuccess = true
-		}.body<PaginatedList<Long, JsonElement, T>>().rows.map { it.doc }
+		}.bodyOrThrow<PaginatedList<Long, JsonElement, T>>().rows.map { it.doc }
 
 	init {
 		runBlocking {
@@ -231,7 +231,7 @@ class CouchDbServiceImpl private constructor(
 				}
 			}.let {
 				if (it.status.isSuccess()) {
-					it.body<JsonObject>().getValue("_rev").jsonPrimitive.content
+					it.bodyOrThrow<JsonObject>().getValue("_rev").jsonPrimitive.content
 				} else null
 			}
 			client.put {
@@ -262,7 +262,7 @@ class CouchDbServiceImpl private constructor(
 				}
 			}.let {
 				if (it.status.isSuccess()) {
-					it.body<JsonObject>().getValue("_rev").jsonPrimitive.content
+					it.bodyOrThrow<JsonObject>().getValue("_rev").jsonPrimitive.content
 				} else null
 			}
 			client.put {

@@ -1,6 +1,5 @@
 package org.testadirapa.services.impl
 
-import io.ktor.client.call.body
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
@@ -23,6 +22,7 @@ import org.testadirapa.cardtrader.exception.NotFoundException
 import org.testadirapa.services.CardTraderService
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.time.Duration.Companion.hours
+import org.testadirapa.utils.bodyOrThrow
 
 class CardTraderServiceImpl private constructor(
 	cardTraderToken: String
@@ -80,7 +80,7 @@ class CardTraderServiceImpl private constructor(
 					url {
 						appendPathSegments("expansions")
 					}
-				}.body<List<Expansion>>().let {
+				}.bodyOrThrow<List<Expansion>>().let {
 					CachedExpansions(it.associateBy { it.id })
 				}
 				System.currentTimeMillis() to result
@@ -105,7 +105,7 @@ class CardTraderServiceImpl private constructor(
 					parameter("expansion_id", expansionId)
 				}
 			}
-		}.body()
+		}.bodyOrThrow()
 
 	override suspend fun searchProducts(
 		blueprintId: Long,
@@ -126,7 +126,7 @@ class CardTraderServiceImpl private constructor(
 				parameter("language", language)
 			}
 		}
-	}.body<Map<String, List<Product>>>().let {
+	}.bodyOrThrow<Map<String, List<Product>>>().let {
 		if (!it.contains(blueprintId.toString())) {
 			throw NotFoundException("Blueprint $blueprintId not found in products")
 		}
