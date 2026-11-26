@@ -1,4 +1,4 @@
-FROM gradle:9.9.2-jdk21 AS build
+FROM gradle:9.9.2-jdk21-corretto AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle --no-daemon kotlinUpgradeYarnLock jsBrowserDistribution fatJar
