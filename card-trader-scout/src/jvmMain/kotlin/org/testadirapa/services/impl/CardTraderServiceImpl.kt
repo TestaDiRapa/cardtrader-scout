@@ -80,8 +80,8 @@ class CardTraderServiceImpl private constructor(
 					url {
 						appendPathSegments("expansions")
 					}
-				}.bodyOrThrow<List<Expansion>>().let {
-					CachedExpansions(it.associateBy { it.id })
+				}.bodyOrThrow<List<Expansion>>().let { expansions ->
+					CachedExpansions(expansions.associateBy { it.id })
 				}
 				System.currentTimeMillis() to result
 			}

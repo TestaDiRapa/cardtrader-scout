@@ -118,7 +118,7 @@ class PriceChecker private constructor(
 	}
 
 	private fun Watcher.matches(product: Product): Boolean =
-		product.priceCents <= priceThreshold
+		product.price.cents <= priceThreshold
 			&& product.properties.condition in conditions
 			&& product.properties.language in languages
 			&& (!cardTraderZeroOnly || product.user.canSellViaHub)
@@ -127,7 +127,7 @@ class PriceChecker private constructor(
 		append("New listing for ${blueprint.name}:\n")
 		append("Condition: ${product.properties.condition.serialName}\n")
 		append("Language: ${product.properties.language.toEmoji()}\n")
-		append("Price: ${product.priceCents/100.0} €")
+		append("Price: ${product.price.cents/100.0} €")
 	}
 
 }

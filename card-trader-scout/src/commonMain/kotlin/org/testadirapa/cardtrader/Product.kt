@@ -6,9 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Product(
 	val id: Int,
-	@SerialName("price_cents") val priceCents: Int,
-	@SerialName("price_currency") val currency: Currency,
+	val price: Price,
 	@SerialName("properties_hash") val properties: ProductProperties,
-	@SerialName("on_vacation") val onVacation: Boolean,
+	@SerialName("on_vacation") val onVacation: Boolean = false,
 	val user: Seller
 )
